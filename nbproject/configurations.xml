@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurationDescriptor version="79">
+  <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
+    <df name="genesis-plus-gx" root="Z:/xenon/share/genesis-plus-gx">
+      <df name="build">
+      </df>
+      <df name="source">
+        <df name="cart_hw">
+          <df name="svp">
+            <in>ssp16.c</in>
+            <in>ssp16.h</in>
+            <in>svp.c</in>
+            <in>svp.h</in>
+          </df>
+          <in>areplay.c</in>
+          <in>areplay.h</in>
+          <in>gg_eeprom.c</in>
+          <in>gg_eeprom.h</in>
+          <in>ggenie.c</in>
+          <in>ggenie.h</in>
+          <in>md_cart.c</in>
+          <in>md_cart.h</in>
+          <in>md_eeprom.c</in>
+          <in>md_eeprom.h</in>
+          <in>sms_cart.c</in>
+          <in>sms_cart.h</in>
+          <in>sram.c</in>
+          <in>sram.h</in>
+        </df>
+        <df name="gx">
+          <df name="fileio">
+            <in>file_load.c</in>
+            <in>file_load.h</in>
+            <in>file_slot.c</in>
+            <in>file_slot.h</in>
+            <in>fileio.c</in>
+            <in>fileio.h</in>
+            <in>history.c</in>
+            <in>history.h</in>
+          </df>
+          <df name="gui">
+            <in>cheats.c</in>
+            <in>cheats.h</in>
+            <in>filesel.c</in>
+            <in>filesel.h</in>
+            <in>font.c</in>
+            <in>font.h</in>
+            <in>gui.c</in>
+            <in>gui.h</in>
+            <in>legal.c</in>
+            <in>menu.c</in>
+            <in>menu.h</in>
+            <in>saveicon.h</in>
+          </df>
+          <df name="images">
+          </df>
+          <df name="sounds">
+          </df>
+          <df name="utils">
+            <in>oggplayer.c</in>
+            <in>oggplayer.h</in>
+            <in>vi_encoder.c</in>
+            <in>vi_encoder.h</in>
+          </df>
+          <in>config.c</in>
+          <in>config.h</in>
+          <in>gx_audio.c</in>
+          <in>gx_audio.h</in>
+          <in>gx_input.c</in>
+          <in>gx_input.h</in>
+          <in>gx_video.c</in>
+          <in>gx_video.h</in>
+          <in>main.c</in>
+          <in>osd.h</in>
+        </df>
+        <df name="input_hw">
+          <in>activator.c</in>
+          <in>activator.h</in>
+          <in>gamepad.c</in>
+          <in>gamepad.h</in>
+          <in>input.c</in>
+          <in>input.h</in>
+          <in>lightgun.c</in>
+          <in>lightgun.h</in>
+          <in>mouse.c</in>
+          <in>mouse.h</in>
+          <in>paddle.c</in>
+          <in>paddle.h</in>
+          <in>sportspad.c</in>
+          <in>sportspad.h</in>
+          <in>teamplayer.c</in>
+          <in>teamplayer.h</in>
+          <in>terebi_oekaki.c</in>
+          <in>terebi_oekaki.h</in>
+          <in>xe_a1p.c</in>
+          <in>xe_a1p.h</in>
+        </df>
+        <df name="m68k">
+          <in>m68k.h</in>
+          <in>m68kconf.h</in>
+          <in>m68kcpu.c</in>
+          <in>m68kcpu.h</in>
+          <in>m68kops.h</in>
+        </df>
+        <df name="ntsc">
+          <in>md_ntsc.c</in>
+          <in>md_ntsc.h</in>
+          <in>md_ntsc_config.h</in>
+          <in>md_ntsc_impl.h</in>
+          <in>sms_ntsc.c</in>
+          <in>sms_ntsc.h</in>
+          <in>sms_ntsc_config.h</in>
+          <in>sms_ntsc_impl.h</in>
+        </df>
+        <df name="sound">
+          <in>Fir_Resampler.c</in>
+          <in>Fir_Resampler.h</in>
+          <in>blip.c</in>
+          <in>blip.h</in>
+          <in>eq.c</in>
+          <in>eq.h</in>
+          <in>sn76489.c</in>
+          <in>sn76489.h</in>
+          <in>sound.c</in>
+          <in>sound.h</in>
+          <in>ym2413.c</in>
+          <in>ym2413.h</in>
+          <in>ym2612.c</in>
+          <in>ym2612.h</in>
+        </df>
+        <df name="win">
+          <in>config.c</in>
+          <in>config.h</in>
+          <in>error.c</in>
+          <in>error.h</in>
+          <in>fileio.c</in>
+          <in>fileio.h</in>
+          <in>main.c</in>
+          <in>main.h</in>
+          <in>osd.h</in>
+          <in>unzip.c</in>
+          <in>unzip.h</in>
+        </df>
+        <df name="xenon">
+          <df name=".svn">
+          </df>
+          <in>config - Copie.c</in>
+          <in>config.c</in>
+          <in>config.h</in>
+          <in>error.c</in>
+          <in>error.h</in>
+          <in>fileio.c</in>
+          <in>fileio.h</in>
+          <in>main.c</in>
+          <in>main.h</in>
+          <in>osd.h</in>
+          <in>ps.h</in>
+          <in>unzip.c</in>
+          <in>unzip.h</in>
+          <in>vs.h</in>
+        </df>
+        <df name="z80">
+          <in>osd_cpu.h</in>
+          <in>z80.c</in>
+          <in>z80.h</in>
+        </df>
+        <in>genesis.c</in>
+        <in>genesis.h</in>
+        <in>hvc.h</in>
+        <in>io_ctrl.c</in>
+        <in>io_ctrl.h</in>
+        <in>loadrom.c</in>
+        <in>loadrom.h</in>
+        <in>macros.h</in>
+        <in>mem68k.c</in>
+        <in>mem68k.h</in>
+        <in>membnk.c</in>
+        <in>membnk.h</in>
+        <in>memz80.c</in>
+        <in>memz80.h</in>
+        <in>shared.h</in>
+        <in>state.c</in>
+        <in>state.h</in>
+        <in>system.c</in>
+        <in>system.h</in>
+        <in>types.h</in>
+        <in>vdp_ctrl.c</in>
+        <in>vdp_ctrl.h</in>
+        <in>vdp_render.c</in>
+        <in>vdp_render.h</in>
+      </df>
+    </df>
+    <logicalFolder name="ExternalFiles"
+                   displayName="Important Files"
+                   projectFiles="false"
+                   kind="IMPORTANT_FILES_FOLDER">
+      <itemPath>Z:/xenon/share/genesis-plus-gx/Makefile.xenon</itemPath>
+    </logicalFolder>
+  </logicalFolder>
+  <sourceFolderFilter>^(nbproject)$</sourceFolderFilter>
+  <sourceRootList>
+    <Elem>Z:/xenon/share/genesis-plus-gx</Elem>
+  </sourceRootList>
+  <projectmakefile>Z:/xenon/share/genesis-plus-gx/Makefile.xenon</projectmakefile>
+  <confs>
+    <conf name="Default" type="0">
+      <toolsSet>
+        <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
+        <compilerSet>default</compilerSet>
+      </toolsSet>
+      <makefileType>
+        <makeTool>
+          <buildCommandWorkingDir>Z:/xenon/share/genesis-plus-gx</buildCommandWorkingDir>
+          <buildCommand>${MAKE} -f Makefile.xenon run</buildCommand>
+          <cleanCommand>${MAKE} -f Makefile.xenon clean</cleanCommand>
+          <executablePath></executablePath>
+          <cTool>
+            <incDir>
+              <pElem>.</pElem>
+              <pElem>../include</pElem>
+              <pElem>Z:/xenon/share/include</pElem>
+            </incDir>
+          </cTool>
+          <ccTool>
+            <incDir>
+              <pElem>.</pElem>
+              <pElem>../include</pElem>
+            </incDir>
+          </ccTool>
+        </makeTool>
+      </makefileType>
+    </conf>
+  </confs>
+</configurationDescriptor>
