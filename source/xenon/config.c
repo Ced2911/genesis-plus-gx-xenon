@@ -37,6 +37,9 @@ void set_config_defaults(void)
   config.overscan = 3;       /* = both ON (0 = no borders , 1 = vertical borders only, 2 = horizontal borders only) */
   config.render   = 0;       /* 1 = double resolution output (only when interlaced mode 2 is enabled) */
 
+  /* video filter */
+  config.video_filter = VIDEO_FILTER_NONE;
+  
   /* controllers options */
   input.system[0]       = SYSTEM_MD_GAMEPAD;
   input.system[1]       = SYSTEM_MD_GAMEPAD;

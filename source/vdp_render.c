@@ -4113,6 +4113,7 @@ void remap_line(int line)
   uint8 *src = &linebuf[0][0x20 - x_offset];
 
   /* NTSC Filter (only supported for 16-bit pixels rendering) */
+#ifndef LIBXENON
 #ifdef USE_16BPP_RENDERING
   if (config.ntsc)
   {
@@ -4126,6 +4127,7 @@ void remap_line(int line)
     }
   }
   else
+#endif
 #endif
   {
     /* Convert VDP pixel data to output pixel format */

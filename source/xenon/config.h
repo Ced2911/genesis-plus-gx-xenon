@@ -2,6 +2,12 @@
 #ifndef _CONFIG_H_
 #define _CONFIG_H_
 
+enum VIDEO_FILTER{
+    VIDEO_FILTER_NONE = 0,
+    VIDEO_FILTER_BLINEAR,
+    VIDEO_FILTER_MAX
+};
+
 /****************************************************************************
  * Config Option 
  *
@@ -40,6 +46,7 @@ typedef struct
   uint8 overscan;
   uint8 ntsc;
   uint8 render;
+  uint8 video_filter;
   t_input_config input[MAX_INPUTS];
 } t_config;
 

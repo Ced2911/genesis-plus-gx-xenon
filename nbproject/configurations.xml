@@ -142,9 +142,6 @@
           <in>unzip.h</in>
         </df>
         <df name="xenon">
-          <df name=".svn">
-          </df>
-          <in>config - Copie.c</in>
           <in>config.c</in>
           <in>config.h</in>
           <in>error.c</in>
@@ -158,6 +155,14 @@
           <in>unzip.c</in>
           <in>unzip.h</in>
           <in>vs.h</in>
+          <in>xeaudio.c</in>
+          <in>xeaudio.h</in>
+          <in>xeinput.c</in>
+          <in>xeinput.h</in>
+          <in>xesys.c</in>
+          <in>xesys.h</in>
+          <in>xevideo.c</in>
+          <in>xevideo.h</in>
         </df>
         <df name="z80">
           <in>osd_cpu.h</in>
@@ -206,7 +211,7 @@
     <conf name="Default" type="0">
       <toolsSet>
         <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
-        <compilerSet>default</compilerSet>
+        <compilerSet>libxenon|GNU</compilerSet>
       </toolsSet>
       <makefileType>
         <makeTool>
