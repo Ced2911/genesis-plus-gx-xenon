@@ -23,7 +23,7 @@ void SYSAudioInit() {
 }
 
 void SYSAudioUpdate() {
-    int size = audio_update();
+    int size = audio_update() * 4;
 
     int i;
 
@@ -36,12 +36,16 @@ void SYSAudioUpdate() {
         ++pAudioBuffer;
     }
 
-    for (i = 0; i < size / 2; i++) {
+
+    for (i = 0; i < size; i++) {
         p[i] = bswap_32(p[i]);
     }
+
 
     if (pAudioBuffer - pAudioStart > 10000)
         pAudioBuffer = pAudioStart;
 
-    xenon_sound_submit(p, size * 2);
+    while(xenon_sound_get_unplayed()>(4*size)) udelay(50);
+    
+    xenon_sound_submit(p, size);
 }

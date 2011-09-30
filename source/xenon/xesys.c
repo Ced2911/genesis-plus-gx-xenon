@@ -71,5 +71,7 @@ void SYSClose() {
 }
 
 void SYSUpdate() {
-    frame_cap(vdp_pal ? 60 : 50);
+    //frame_cap(vdp_pal ? 60 : 50);
+    
+    
 }
