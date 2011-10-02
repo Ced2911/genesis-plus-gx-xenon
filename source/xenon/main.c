@@ -35,7 +35,8 @@ int main() {
     memset(cart.rom, 0, 10 * 1024 * 1024);
     //
     //if (!load_rom("uda:/sonic.smd")) {
-    if (!load_rom("uda:/Sonic the Hedgehog 3 (E).zip")) {
+   // if (!load_rom("uda:/roms/Sonic the Hedgehog 3 (E).zip")) {
+   if (!load_rom("uda:/roms/Sonic and Knuckles & Sonic 3 (JUE) [!].zip")) {
         printf("Error loading file `%s'.", "uda:/Sonic the Hedgehog 3 (E).zip");
         return 1;
     }
@@ -81,7 +82,10 @@ int main() {
 
     /* reset emulation */
     system_reset();
-
+    
+    /* run 1 frame */
+    system_frame(0);
+    
     int running = 1;
     /* emulation loop */
     while (running) {

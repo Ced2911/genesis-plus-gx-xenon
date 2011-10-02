@@ -48,36 +48,25 @@ void update_texture_viewport(int width, int height) {
     static int old_width = 0;
     static int old_height = 0;
 
-    if ((width != old_width) || (old_height != height)) {
+    //if ((width != old_width) || (old_height != height)) {
 
+    ScreenUv[UvTop] = ((float) (width) / (float) XE_W)*2;
+    ScreenUv[UvLeft] = ((float) (height) / (float) XE_H)*2;
 
+    DrawVerticeFormats *Rect = Xe_VB_Lock(g_pVideoDevice, vb, 0, 3 * sizeof (DrawVerticeFormats), XE_LOCK_WRITE);
+    {
+        // bottom left
 
-        ScreenUv[UvTop] = (float) (width + 0x40) / (float) XE_W;
-        ScreenUv[UvLeft] = (float) (height + 0x20) / (float) XE_H;
+        Rect[1].v = ScreenUv[UvLeft];
+        Rect[2].u = ScreenUv[UvTop];
 
-
-        ScreenUv[UvTop] = ScreenUv[UvTop] *2;
-        ScreenUv[UvLeft] = ScreenUv[UvLeft]*2;
-
-        DrawVerticeFormats *Rect = Xe_VB_Lock(g_pVideoDevice, vb, 0, 6 * sizeof (DrawVerticeFormats), XE_LOCK_WRITE);
-        {
-            // top left
-            Rect[0].u = ScreenUv[UvBottom];
-            Rect[0].v = ScreenUv[UvRight];
-
-            // bottom left
-            Rect[1].u = ScreenUv[UvBottom];
-            Rect[1].v = ScreenUv[UvLeft];
-
-            // top right
-            Rect[2].u = ScreenUv[UvTop];
-            Rect[2].v = ScreenUv[UvRight];
-        }
-        Xe_VB_Unlock(g_pVideoDevice, vb);
-
-        old_width = width;
-        old_height = height;
     }
+    Xe_VB_Unlock(g_pVideoDevice, vb);
+
+    old_width = width;
+    old_height = height;
+    //}
+    //printf("%f - %f \r\n",Rect[1].v,Rect[2].u);
 }
 
 void SYSVideoInit() {
@@ -172,20 +161,8 @@ void SYSVideoInit() {
 }
 
 void SYSVideoUpdate() {
-    // resize uv to viewport
-    /*
-        printf("bitmap.viewport\r\n");
-        printf("w : %d | h : %d | x : %d | y : %d\r\n",bitmap.viewport.w,bitmap.viewport.h,bitmap.viewport.x,bitmap.viewport.y);
-        printf("bw : %d | bh : %d\r\n",bitmap.width,bitmap.height);
-     */
-
-
-    /* check if display has changed during frame */
-    if (bitmap.viewport.changed & 1) {
-        update_texture_viewport(bitmap.viewport.w, bitmap.viewport.h);
-        /* clear update flags */
-        bitmap.viewport.changed &= ~1;
-    }
+    /* resize uv to viewport */
+    update_texture_viewport(bitmap.viewport.w, bitmap.viewport.h);
 
     // Refresh texture cash
     Xe_Surface_LockRect(g_pVideoDevice, g_pTexture, 0, 0, 0, 0, XE_LOCK_WRITE);
