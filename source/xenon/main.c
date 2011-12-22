@@ -7,23 +7,30 @@
 #include "sms_ntsc.h"
 #include "md_ntsc.h"
 
+#include <ppc/timebase.h>
 
 #include "xesys.h"
 #include "xeaudio.h"
 #include "xevideo.h"
 #include "xeinput.h"
+#include "xemenu.h"
 
+#if 0
 
 void osd_input_Update() {
     //usb_do_poll();
 }
 
 
-int main() {
+
+int genesis_main(const char * romname){
+    
+
    
     SYSInit();
     SYSVideoInit();
     SYSAudioInit();
+    SYSMenuInit();
 
 
     /* set default config */
@@ -35,9 +42,11 @@ int main() {
     memset(cart.rom, 0, 10 * 1024 * 1024);
     //
     //if (!load_rom("uda:/sonic.smd")) {
+    if (!load_rom("uda:/Sonic the Hedgehog 3 (E).zip")) {
    // if (!load_rom("uda:/roms/Sonic the Hedgehog 3 (E).zip")) {
-   if (!load_rom("uda:/roms/Sonic and Knuckles & Sonic 3 (JUE) [!].zip")) {
-        printf("Error loading file `%s'.", "uda:/Sonic the Hedgehog 3 (E).zip");
+   //if (!load_rom("uda:/roms/Sonic and Knuckles & Sonic 3 (JUE) [!].zip")) {
+    //if (!load_rom("sda:/hdd1/xenon/genesis/Sonic and Knuckles & Sonic 2 (JUE) [!].zip")) {
+        printf("Error loading file `%s'.", "sda:/hdd1/xenon/genesis/Sonic and Knuckles & Sonic 2 (JUE) [!].zip");
         return 1;
     }
 
@@ -91,9 +100,6 @@ int main() {
     while (running) {
         system_frame(0);
         SYSUpdate();
-        SYSVideoUpdate();
-        SYSAudioUpdate();
-        SYSInputUpdate();
     }
 
     /* save SRAM */
@@ -110,3 +116,5 @@ int main() {
 
     return 0;
 }
+
+#endif

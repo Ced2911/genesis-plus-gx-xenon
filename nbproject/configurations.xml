@@ -3,6 +3,139 @@
   <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
     <df name="genesis-plus-gx" root="Z:/xenon/share/genesis-plus-gx">
       <df name="build">
+        <in>__xenon_bg_png.h</in>
+        <in>_xenon_bg_png.h</in>
+        <in>bg_file_selection_entry_png.h</in>
+        <in>bg_file_selection_png.h</in>
+        <in>bg_music_ogg.h</in>
+        <in>bg_options_entry_png.h</in>
+        <in>bg_options_png.h</in>
+        <in>bg_png.h</in>
+        <in>button_click_pcm.h</in>
+        <in>button_large_over_png.h</in>
+        <in>button_large_png.h</in>
+        <in>button_over_pcm.h</in>
+        <in>button_over_png.h</in>
+        <in>button_png.h</in>
+        <in>dialogue_box_png.h</in>
+        <in>en_lang.h</in>
+        <in>folder_png.h</in>
+        <in>font_ttf.h</in>
+        <in>keyboard_key_over_png.h</in>
+        <in>keyboard_key_png.h</in>
+        <in>keyboard_largekey_over_png.h</in>
+        <in>keyboard_largekey_png.h</in>
+        <in>keyboard_mediumkey_over_png.h</in>
+        <in>keyboard_mediumkey_png.h</in>
+        <in>keyboard_textbox_png.h</in>
+        <in>player1_grab_png.h</in>
+        <in>player1_point_png.h</in>
+        <in>player2_grab_png.h</in>
+        <in>player2_point_png.h</in>
+        <in>player3_grab_png.h</in>
+        <in>player3_point_png.h</in>
+        <in>player4_grab_png.h</in>
+        <in>player4_point_png.h</in>
+        <in>scrollbar_arrowdown_over_png.h</in>
+        <in>scrollbar_arrowdown_png.h</in>
+        <in>scrollbar_arrowup_over_png.h</in>
+        <in>scrollbar_arrowup_png.h</in>
+        <in>scrollbar_box_over_png.h</in>
+        <in>scrollbar_box_png.h</in>
+        <in>scrollbar_png.h</in>
+        <in>xenon_bg_file_selection_entry_png.h</in>
+        <in>xenon_bg_png.h</in>
+        <in>xenon_button_large_over_png.h</in>
+        <in>xenon_button_large_png.h</in>
+        <in>xenon_button_over_png.h</in>
+        <in>xenon_button_png.h</in>
+        <in>xenon_filebrowser_png.h</in>
+        <in>xenon_popup_png.h</in>
+        <in>xenon_scrollbar_png.h</in>
+      </df>
+      <df name="gui">
+        <df name="shaders">
+          <in>ps.c.h</in>
+          <in>ps.t.h</in>
+          <in>ps.tc.h</in>
+          <in>vs.h</in>
+        </df>
+        <df name="source">
+          <df name="demo">
+            <in>menu.cpp</in>
+            <in>menu.h</in>
+          </df>
+          <df name="fonts">
+          </df>
+          <df name="genesisplus">
+            <in>dictionary.c</in>
+            <in>dictionary.h</in>
+            <in>g_genplus.cpp</in>
+            <in>genesis_settings.cpp</in>
+            <in>genesis_settings.h</in>
+            <in>iniparser.c</in>
+            <in>iniparser.h</in>
+            <in>menu.cpp</in>
+            <in>menu.h</in>
+          </df>
+          <df name="images">
+            <df name="psd">
+            </df>
+          </df>
+          <df name="lang">
+          </df>
+          <df name="libwiigui">
+            <in>gui.h</in>
+            <in>gui_button.cpp</in>
+            <in>gui_element.cpp</in>
+            <in>gui_filebrowser.cpp</in>
+            <in>gui_image.cpp</in>
+            <in>gui_imagedata.cpp</in>
+            <in>gui_keyboard.cpp</in>
+            <in>gui_optionbrowser.cpp</in>
+            <in>gui_sound.cpp</in>
+            <in>gui_text.cpp</in>
+            <in>gui_trigger.cpp</in>
+            <in>gui_window.cpp</in>
+          </df>
+          <df name="sounds">
+          </df>
+          <df name="vec">
+            <in>gu.c</in>
+            <in>gu.h</in>
+          </df>
+          <in>FreeTypeGX.cpp</in>
+          <in>FreeTypeGX.h</in>
+          <in>Utils.cpp</in>
+          <in>Vec.h</in>
+          <in>VecMatrix.cpp</in>
+          <in>VecVector.cpp</in>
+          <in>_pnginfo.h</in>
+          <in>audio.cpp</in>
+          <in>audio.h</in>
+          <in>demo.cpp</in>
+          <in>demo.h</in>
+          <in>filebrowser.cpp</in>
+          <in>filebrowser.h</in>
+          <in>filelist.h</in>
+          <in>gettext.cpp</in>
+          <in>gettext.h</in>
+          <in>input.cpp</in>
+          <in>input.h</in>
+          <in>miss_.c</in>
+          <in>oggplayer.c</in>
+          <in>oggplayer.h</in>
+          <in>pngu.c</in>
+          <in>pngu.h</in>
+          <in>ps.h</in>
+          <in>screencapture.c</in>
+          <in>video.cpp</in>
+          <in>video.h</in>
+          <in>vs.h</in>
+          <in>w_input.h</in>
+          <in>wchar.c</in>
+          <in>wchar.h</in>
+        </df>
       </df>
       <df name="source">
         <df name="cart_hw">
@@ -159,6 +292,8 @@
           <in>xeaudio.h</in>
           <in>xeinput.c</in>
           <in>xeinput.h</in>
+          <in>xemenu.c</in>
+          <in>xemenu.h</in>
           <in>xesys.c</in>
           <in>xesys.h</in>
           <in>xevideo.c</in>
@@ -199,7 +334,7 @@
                    displayName="Important Files"
                    projectFiles="false"
                    kind="IMPORTANT_FILES_FOLDER">
-      <itemPath>Z:/xenon/share/genesis-plus-gx/Makefile.xenon</itemPath>
+      <itemPath>Z:/xenon/share/genesis-plus-gx/Makefile</itemPath>
     </logicalFolder>
   </logicalFolder>
   <sourceFolderFilter>^(nbproject)$</sourceFolderFilter>
@@ -216,8 +351,8 @@
       <makefileType>
         <makeTool>
           <buildCommandWorkingDir>Z:/xenon/share/genesis-plus-gx</buildCommandWorkingDir>
-          <buildCommand>${MAKE} -f Makefile.xenon run</buildCommand>
-          <cleanCommand>${MAKE} -f Makefile.xenon clean</cleanCommand>
+          <buildCommand>${MAKE} -f Makefile run</buildCommand>
+          <cleanCommand>${MAKE} -f Makefile clean</cleanCommand>
           <executablePath></executablePath>
           <cTool>
             <incDir>

@@ -8,6 +8,8 @@
 
 #include "xeaudio.h"
 
+static int sound_initialised = 0;
+
 uint16_t * pAudioBuffer = NULL;
 uint16_t * pAudioStart = NULL;
 
@@ -16,10 +18,14 @@ void SYSAudioFree() {
 }
 
 void SYSAudioInit() {
-    xenon_sound_init();
+    if (sound_initialised == 0) {
+        xenon_sound_init();
 
-    pAudioStart = pAudioBuffer = (uint16_t*) malloc(48000 * sizeof (uint16_t));
-    memset(pAudioBuffer, 0, 48000 * sizeof (uint16_t));
+        pAudioStart = pAudioBuffer = (uint16_t*) malloc(48000 * sizeof (uint16_t));
+        memset(pAudioBuffer, 0, 48000 * sizeof (uint16_t));
+
+        sound_initialised = 1;
+    }
 }
 
 void SYSAudioUpdate() {
@@ -45,7 +51,7 @@ void SYSAudioUpdate() {
     if (pAudioBuffer - pAudioStart > 10000)
         pAudioBuffer = pAudioStart;
 
-    while(xenon_sound_get_unplayed()>(4*size)) udelay(50);
-    
+    while (xenon_sound_get_unplayed()>(4 * size)) udelay(50);
+
     xenon_sound_submit(p, size);
 }

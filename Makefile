@@ -15,17 +15,22 @@ MACHDEP =  -DXENON -m32 -mno-altivec -fno-pic  -fno-pic -mpowerpc64 -mhard-float
 # SOURCES is a list of directories containing source code
 # INCLUDES is a list of directories containing extra header files
 #---------------------------------------------------------------------------------
+GUI_SRC         := gui/source gui/source/libwiigui gui/source/images gui/source/fonts gui/source/sounds \
+                    gui/source/lang gui/source/vec gui/source/genesisplus
+
+GUI_INC         := gui/source gui/source/genesisplus
+
 TARGET		:=  $(notdir $(CURDIR))
 BUILD		:=  build
 DATA		:=  
-SOURCES		:=	source source/m68k source/z80 source/sound source/ntsc source/input_hw source/cart_hw source/cart_hw/svp source/xenon		
-INCLUDES	:=	source source/m68k source/z80 source/sound source/ntsc source/input_hw  source/cart_hw source/cart_hw/svp source/xenon
+SOURCES		:=	$(GUI_SRC) source source/m68k source/z80 source/sound source/ntsc source/input_hw source/cart_hw source/cart_hw/svp source/xenon		
+INCLUDES	:=	$(GUI_INC) source source/m68k source/z80 source/sound source/ntsc source/input_hw  source/cart_hw source/cart_hw/svp source/xenon
 
 #---------------------------------------------------------------------------------
 # options for code generation
 #---------------------------------------------------------------------------------
 ASFLAGS	= -Wa,$(INCLUDE) -Wa,-a32
-CFLAGS	= -ffunction-sections -fdata-sections -g -Ofast -fno-tree-vectorize -fno-tree-slp-vectorize -ftree-vectorizer-verbose=1 -Wall $(MACHDEP) $(INCLUDE) -DLOG_STDOUT -DLIBXENON -DUSE_32BPP_RENDERING
+CFLAGS	= -ffunction-sections -fdata-sections -g -Ofast -fno-tree-vectorize -fno-tree-slp-vectorize -ftree-vectorizer-verbose=1 -Wall $(MACHDEP) $(INCLUDE) -DNO_SOUND -DLOG_STDOUT -DLIBXENON -DUSE_32BPP_RENDERING
 CXXFLAGS	=	$(CFLAGS)
 
 LDFLAGS	=	-g $(MACHDEP) -Wl,--gc-sections -Wl,-Map,$(notdir $@).map
@@ -33,7 +38,7 @@ LDFLAGS	=	-g $(MACHDEP) -Wl,--gc-sections -Wl,-Map,$(notdir $@).map
 #---------------------------------------------------------------------------------
 # any extra libraries we wish to link with the project
 #---------------------------------------------------------------------------------
-LIBS	:=	-lzlx  -lpng -lbz2  -lxenon -lm -lz
+LIBS	:=	-lpng -lbz2  -lxenon -lm -lz -lfreetype
 
 #---------------------------------------------------------------------------------
 # list of directories containing libraries, this must be the top level containing
@@ -68,6 +73,11 @@ CPPFILES	:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.cpp)))
 sFILES		:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.s)))
 SFILES		:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.S)))
 BINFILES	:=	$(foreach dir,$(DATA),$(notdir $(wildcard $(dir)/*.*)))
+TTFFILES	:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.ttf)))
+LANGFILES	:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.lang)))
+PNGFILES	:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.png)))
+OGGFILES	:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.ogg)))
+PCMFILES	:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.pcm)))
 
 #---------------------------------------------------------------------------------
 # use CXX for linking C++ projects, CC for standard C
@@ -78,9 +88,11 @@ else
 	export LD	:=	$(CXX)
 endif
 
-export OFILES	:=	$(addsuffix .o,$(BINFILES)) \
+export OFILES	:=	$(CPPFILES:.cpp=.cpp.o) $(CFILES:.c=.c.o) \
 					$(sFILES:.s=.o) $(SFILES:.S=.o) \
-					$(CPPFILES:.cpp=.o) $(CFILES:.c=.o) \
+					$(TTFFILES:.ttf=.ttf.o) $(LANGFILES:.lang=.lang.o) \
+					$(PNGFILES:.png=.png.o) \
+					$(OGGFILES:.ogg=.ogg.o) $(PCMFILES:.pcm=.pcm.o)
 					
 
 #---------------------------------------------------------------------------------
@@ -89,7 +101,7 @@ export OFILES	:=	$(addsuffix .o,$(BINFILES)) \
 export INCLUDE	:=	$(foreach dir,$(INCLUDES),-I$(CURDIR)/$(dir)) \
                         $(foreach dir,$(LIBDIRS),-I$(dir)/include) \
                         -I$(CURDIR)/$(BUILD) \
-			-I$(LIBXENON_INC)
+			-I$(LIBXENON_INC) -I$(LIBXENON_INC)/freetype2
 
 #---------------------------------------------------------------------------------
 # build a list of library paths
@@ -103,7 +115,7 @@ export OUTPUT	:=	$(CURDIR)/$(TARGET)
 #---------------------------------------------------------------------------------
 $(BUILD):
 	@[ -d $@ ] || mkdir -p $@
-	@make --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile.xenon
+	@make --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile
 
 #---------------------------------------------------------------------------------
 clean:
@@ -131,12 +143,36 @@ $(OUTPUT).elf: $(OFILES)
 %.bin.o : %.bin
 	@echo $(notdir $<)
 	@$(bin2o)
-%.png.o : %.png
-	@echo $(notdir $<)
-	@$(bin2o)
 %.abc.o : %.abc
 	@echo $(notdir $<)
 	@$(bin2o)
+%.ttf.o : %.ttf
+	@echo $(notdir $<)
+	$(bin2o)
+
+%.lang.o : %.lang
+	@echo $(notdir $<)
+	$(bin2o)
+
+%.png.o : %.png
+	@echo $(notdir $<)
+	$(bin2o)
+
+%.ogg.o : %.ogg
+	@echo $(notdir $<)
+	$(bin2o)
+
+%.pcm.o : %.pcm
+	@echo $(notdir $<)
+	$(bin2o)
+
+%.cpp.o: %.cpp
+	@echo [$(notdir $<)]
+	@$(CXX) -MMD -MP -MF $(DEPSDIR)/$*.d $(CXXFLAGS) -c $< -o $@
+
+%.c.o: %.c
+	@echo [$(notdir $<)]
+	@$(CC) -MMD -MP -MF $(DEPSDIR)/$*.d $(CFLAGS) -c $< -o $@
 #---------------------------------------------------------------------------------
 endif
 #---------------------------------------------------------------------------------
