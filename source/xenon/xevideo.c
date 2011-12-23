@@ -22,8 +22,6 @@ static struct XenosDevice * g_pVideoDevice = NULL;
 static struct XenosShader * g_pVertexShader = NULL;
 static struct XenosShader * g_pPixelTexturedShader = NULL;
 
-
-
 unsigned char* screen = NULL;
 struct XenosSurface * g_pTexture = NULL;
 
@@ -47,30 +45,28 @@ struct XenosDevice * GetVideoDevice();
 
 float ScreenUv[4] = {0.f, 1.0f, 1.0f, 0.f};
 
-void update_texture_viewport(int width, int height) {
-    // Create display
-    static int old_width = 0;
-    static int old_height = 0;
+void update_texture_viewport() {
+    int width = bitmap.viewport.w + 2 * bitmap.viewport.x;
+    int height = bitmap.viewport.h + 2 * bitmap.viewport.y;
 
-    //if ((width != old_width) || (old_height != height)) {
-
-    ScreenUv[UvTop] = ((float) (width) / (float) XE_W)*2;
-    ScreenUv[UvLeft] = ((float) (height) / (float) XE_H)*2;
+    ScreenUv[UvTop] = ((float) (width) / (float) XE_W);
+    ScreenUv[UvLeft] = ((float) (height) / (float) XE_H);
 
     DrawVerticeFormats *Rect = Xe_VB_Lock(g_pVideoDevice, vb, 0, 3 * sizeof (DrawVerticeFormats), XE_LOCK_WRITE);
     {
+        // top left
+        Rect[0].u = ScreenUv[UvBottom];
+        Rect[0].v = ScreenUv[UvRight];
+
         // bottom left
-
+        Rect[1].u = ScreenUv[UvBottom];
         Rect[1].v = ScreenUv[UvLeft];
-        Rect[2].u = ScreenUv[UvTop];
 
+        // top right
+        Rect[2].u = ScreenUv[UvTop];
+        Rect[2].v = ScreenUv[UvRight];
     }
     Xe_VB_Unlock(g_pVideoDevice, vb);
-
-    old_width = width;
-    old_height = height;
-    //}
-    //printf("%f - %f \r\n",Rect[1].v,Rect[2].u);
 }
 
 static int video_initialised = 0;
@@ -100,7 +96,7 @@ void SYSVideoInit() {
 
         if (g_pTexture == NULL)
             g_pTexture = Xe_CreateTexture(g_pVideoDevice, XE_W, XE_H, 1, XE_FMT_8888 | XE_FMT_ARGB, 0);
-        //g_pTexture = Xe_CreateTexture(g_pVideoDevice, XE_W, XE_H, 1, XE_FMT_5551 | XE_FMT_ARGB, 0);
+        
         screen = (unsigned char*) Xe_Surface_LockRect(g_pVideoDevice, g_pTexture, 0, 0, 0, 0, XE_LOCK_WRITE);
         pitch = g_pTexture->wpitch;
         Xe_Surface_Unlock(g_pVideoDevice, g_pTexture);
@@ -108,9 +104,6 @@ void SYSVideoInit() {
     }
 
     // disable filtering
-    /*
-        if (config.video_filter == VIDEO_FILTER_BLINEAR)
-     */
     if (config.video_filter)
         g_pTexture->use_filtering = 1;
     else
@@ -125,15 +118,12 @@ void SYSVideoInit() {
         // move it to ini file
         float x = -1.0f;
         float y = 1.0f;
-        float w = 4.0f;
-        float h = 4.0f;
+        float w = 2.0f;
+        float h = 2.0f;
 
         vb = Xe_CreateVertexBuffer(g_pVideoDevice, 3 * sizeof (DrawVerticeFormats));
         DrawVerticeFormats *Rect = Xe_VB_Lock(g_pVideoDevice, vb, 0, 3 * sizeof (DrawVerticeFormats), XE_LOCK_WRITE);
         {
-            ScreenUv[UvTop] = ScreenUv[UvTop]*2;
-            ScreenUv[UvLeft] = ScreenUv[UvLeft]*2;
-
             // top left
             Rect[0].x = x;
             Rect[0].y = y;
@@ -155,13 +145,6 @@ void SYSVideoInit() {
             Rect[2].v = ScreenUv[UvRight];
             Rect[2].color = 0;
 
-            // top right
-            Rect[3].x = x + w;
-            Rect[3].y = y;
-            Rect[3].u = ScreenUv[UvTop];
-            Rect[3].v = ScreenUv[UvRight];
-            Rect[3].color = 0;
-
             int i = 0;
             for (i = 0; i < 3; i++) {
                 Rect[i].z = 0.0;
@@ -177,7 +160,25 @@ void SYSVideoInit() {
 
 void SYSVideoUpdate() {
     /* resize uv to viewport */
-    update_texture_viewport(bitmap.viewport.w, bitmap.viewport.h);
+    int vwidth = bitmap.viewport.w + (2 * bitmap.viewport.x);
+    int vheight = bitmap.viewport.h + (2 * bitmap.viewport.y);
+
+    if (bitmap.viewport.changed) {
+        static int sw = 0;
+        static int sh = 0;
+
+        if (sw != vwidth)
+            printf("vwidth = %d\r\n", vwidth);
+
+        if (sh != vheight)
+            printf("vheight = %d\r\n", vheight);
+
+        sw = vwidth;
+        sh = vheight;
+    }
+
+    //if(bitmap.viewport.changed)
+    update_texture_viewport();
 
     // Refresh texture cash
     Xe_Surface_LockRect(g_pVideoDevice, g_pTexture, 0, 0, 0, 0, XE_LOCK_WRITE);
@@ -193,8 +194,9 @@ void SYSVideoUpdate() {
     Xe_SetShader(g_pVideoDevice, SHADER_TYPE_PIXEL, g_pPixelTexturedShader, 0);
     Xe_SetShader(g_pVideoDevice, SHADER_TYPE_VERTEX, g_pVertexShader, 0);
 
+    Xe_SetClearColor(g_pVideoDevice, 0xFF000000);
     // Draw
-    Xe_DrawPrimitive(g_pVideoDevice, XE_PRIMTYPE_TRIANGLELIST, 0, 1);
+    Xe_DrawPrimitive(g_pVideoDevice, XE_PRIMTYPE_RECTLIST, 0, 1);
 
     // Resolve
     Xe_Resolve(g_pVideoDevice);

@@ -51,7 +51,7 @@ extern char foldername[1024];
 
 static GuiImageData * pointer[4];
 static GuiImage * bgImg = NULL;
-static GuiSound * bgMusic = NULL;
+//static GuiSound * bgMusic = NULL;
 static GuiWindow * mainWindow = NULL;
 //static lwp_t guithread = LWP_THREAD_NULL;
 static bool guiHalt = true;
@@ -420,9 +420,7 @@ static int MenuInGame() {
     //	trigA.SetSimpleTrigger(-1, WPAD_BUTTON_A | WPAD_CLASSIC_BUTTON_A, PAD_BUTTON_A);
     trigA.SetSimpleTrigger(-1, 0, PAD_BUTTON_A);
 
-    GuiText titleTxt("ttt", 22, (GXColor) {
-        255, 255, 255, 255
-    });
+    GuiText titleTxt(ROMFilename, 22, ColorGrey);
     titleTxt.SetAlignment(ALIGN_LEFT, ALIGN_TOP);
     titleTxt.SetPosition(50, 50);
 
@@ -446,9 +444,7 @@ static int MenuInGame() {
     GuiTrigger trigHome;
     trigHome.SetButtonOnlyTrigger(-1, WPAD_BUTTON_HOME | WPAD_CLASSIC_BUTTON_HOME, 0);
 
-    GuiText saveBtnTxt("Save", 22, (GXColor) {
-        0, 0, 0, 255
-    });
+    GuiText saveBtnTxt("Save", 22, ColorGrey2);
     GuiImage saveBtnImg(&btnLargeOutline);
     GuiImage saveBtnImgOver(&btnLargeOutlineOver);
     //	GuiImage saveBtnIcon(&iconSave);
@@ -465,9 +461,7 @@ static int MenuInGame() {
     //    saveBtn.SetTrigger(trig2);
     saveBtn.SetEffectGrow();
 
-    GuiText loadBtnTxt("Load", 22, (GXColor) {
-        0, 0, 0, 255
-    });
+    GuiText loadBtnTxt("Load", 22, ColorGrey2);
     GuiImage loadBtnImg(&btnLargeOutline);
     GuiImage loadBtnImgOver(&btnLargeOutlineOver);
     //	GuiImage loadBtnIcon(&iconLoad);
@@ -484,9 +478,7 @@ static int MenuInGame() {
     //    loadBtn.SetTrigger(trig2);
     loadBtn.SetEffectGrow();
 
-    GuiText resetBtnTxt("Reset", 22, (GXColor) {
-        0, 0, 0, 255
-    });
+    GuiText resetBtnTxt("Reset", 22, ColorGrey2);
     GuiImage resetBtnImg(&btnLargeOutline);
     GuiImage resetBtnImgOver(&btnLargeOutlineOver);
     //	GuiImage resetBtnIcon(&iconReset);
@@ -503,9 +495,7 @@ static int MenuInGame() {
     //    resetBtn.SetTrigger(trig2);
     resetBtn.SetEffectGrow();
 
-    GuiText gameSettingsBtnTxt("Game Settings", 22, (GXColor) {
-        0, 0, 0, 255
-    });
+    GuiText gameSettingsBtnTxt("Game Settings", 22, ColorGrey2);
     gameSettingsBtnTxt.SetWrap(true, btnLargeOutline.GetWidth() - 20);
     GuiImage gameSettingsBtnImg(&btnLargeOutline);
     GuiImage gameSettingsBtnImgOver(&btnLargeOutlineOver);
@@ -523,9 +513,7 @@ static int MenuInGame() {
     //    gameSettingsBtn.SetTrigger(trig2);
     gameSettingsBtn.SetEffectGrow();
 
-    GuiText mainmenuBtnTxt("Main Menu", 22, (GXColor) {
-        0, 0, 0, 255
-    });
+    GuiText mainmenuBtnTxt("Main Menu", 22, ColorGrey2);
     GuiImage mainmenuBtnImg(&btnOutline);
     GuiImage mainmenuBtnImgOver(&btnOutlineOver);
     GuiButton mainmenuBtn(btnOutline.GetWidth(), btnOutline.GetHeight());
@@ -540,9 +528,7 @@ static int MenuInGame() {
     //    mainmenuBtn.SetTrigger(trig2);
     mainmenuBtn.SetEffectGrow();
 
-    GuiText closeBtnTxt("Close", 20, (GXColor) {
-        0, 0, 0, 255
-    });
+    GuiText closeBtnTxt("Close", 20, ColorGrey2);
     GuiImage closeBtnImg(&btnCloseOutline);
     GuiImage closeBtnImgOver(&btnCloseOutlineOver);
     GuiButton closeBtn(btnCloseOutline.GetWidth(), btnCloseOutline.GetHeight());
@@ -661,7 +647,7 @@ static int MenuGameSaves(int action) {
     //    if (!ChangeInterface(device, NOTSILENT))
     //        return MENU_GAME;
 
-    GuiText titleTxt("Genesis plus xenon - In game menu", 28, ColorGrey);
+    GuiText titleTxt("Genesis plus xenon - In Game menu", 28, ColorGrey);
     titleTxt.SetAlignment(ALIGN_LEFT, ALIGN_TOP);
     titleTxt.SetPosition(50, 50);
 
@@ -687,9 +673,7 @@ static int MenuGameSaves(int action) {
     //	trigA.SetSimpleTrigger(-1, WPAD_BUTTON_A | WPAD_CLASSIC_BUTTON_A, PAD_BUTTON_A);
     trigB.SetSimpleTrigger(-1, 0, PAD_BUTTON_B);
 
-    GuiText backBtnTxt("Go Back", 22, (GXColor) {
-        0, 0, 0, 255
-    });
+    GuiText backBtnTxt("Go Back", 22, ColorGrey2);
     GuiImage backBtnImg(&btnOutline);
     GuiImage backBtnImgOver(&btnOutlineOver);
     GuiButton backBtn(btnOutline.GetWidth(), btnOutline.GetHeight());
@@ -704,9 +688,7 @@ static int MenuGameSaves(int action) {
     backBtn.SetTrigger(&trigB);
     backBtn.SetEffectGrow();
 
-    GuiText closeBtnTxt("Close", 20, (GXColor) {
-        0, 0, 0, 255
-    });
+    GuiText closeBtnTxt("Close", 20, ColorGrey2);
     GuiImage closeBtnImg(&btnCloseOutline);
     GuiImage closeBtnImgOver(&btnCloseOutlineOver);
     GuiButton closeBtn(btnCloseOutline.GetWidth(), btnCloseOutline.GetHeight());
@@ -782,7 +764,7 @@ static int MenuGameSaves(int action) {
 
     if (saves.length == 0 && action == 0) {
         InfoPrompt("No game saves found.");
-        menu = MENU_SETTINGS;
+        menu = MENU_IN_GAME;
     }
 
     GuiSaveBrowser saveBrowser(552, 248, &saves, action);
@@ -900,43 +882,6 @@ static int MenuGameSaves(int action) {
     return menu;
 }
 
-static int __MenuInGame() {
-    int menu = MENU_NONE;
-
-    GuiText titleTxt("Genesis plus xenon - In game menu", 28, ColorGrey);
-    titleTxt.SetAlignment(ALIGN_LEFT, ALIGN_TOP);
-    titleTxt.SetPosition(50, 50);
-
-    GuiTrigger trigA;
-    //	trigA.SetSimpleTrigger(-1, WPAD_BUTTON_A | WPAD_CLASSIC_BUTTON_A, PAD_BUTTON_A);
-    trigA.SetSimpleTrigger(-1, 0, PAD_BUTTON_A);
-
-    GuiImage genesis_display(g_pTexture, screenwidth, screenheight);
-
-    GuiImageData btnOutline(xenon_button_png);
-    GuiImageData btnOutlineOver(xenon_button_over_png);
-
-    HaltGui();
-
-    GuiWindow w(screenwidth, screenheight);
-
-    w.Append(&genesis_display);
-    w.Append(&titleTxt);
-
-
-    mainWindow->Append(&w);
-    ResumeGui();
-
-    while (menu == MENU_NONE) {
-        UGUI();
-        usleep(THREAD_SLEEP);
-    }
-
-    HaltGui();
-    mainWindow->Remove(&w);
-
-    return menu;
-}
 
 /****************************************************************************
  * MenuBrowseDevice
@@ -967,7 +912,7 @@ static int MenuBrowseDevice() {
 
     GuiText titleTxt(title, 28, ColorGrey);
     titleTxt.SetAlignment(ALIGN_LEFT, ALIGN_TOP);
-    titleTxt.SetPosition(100, 50);
+    titleTxt.SetPosition(50, 50);
 
     GuiTrigger trigA;
     //	trigA.SetSimpleTrigger(-1, WPAD_BUTTON_A | WPAD_CLASSIC_BUTTON_A, PAD_BUTTON_A);
@@ -1391,9 +1336,9 @@ void MainMenu(int menu) {
 
     ResumeGui();
 
-    bgMusic = new GuiSound(bg_music_ogg, bg_music_ogg_size, SOUND_OGG);
-    bgMusic->SetVolume(50);
-    bgMusic->Play(); // startup music
+//    bgMusic = new GuiSound(bg_music_ogg, bg_music_ogg_size, SOUND_OGG);
+//    bgMusic->SetVolume(50);
+//    bgMusic->Play(); // startup music
 
     while (currentMenu != MENU_EXIT) {
         switch (currentMenu) {
@@ -1433,8 +1378,8 @@ void MainMenu(int menu) {
 
     HaltGui();
 
-    bgMusic->Stop();
-    delete bgMusic;
+//    bgMusic->Stop();
+//    delete bgMusic;
     delete bgImg;
     delete mainWindow;
 

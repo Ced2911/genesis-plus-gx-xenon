@@ -234,7 +234,7 @@ static void genesis_loop() {
     // set genesis config
     SetGenConfig();
     // restore viewport
-    update_texture_viewport(bitmap.viewport.w, bitmap.viewport.h);
+//    update_texture_viewport(bitmap.viewport.w, bitmap.viewport.h);
     
     /* emulation loop */
     while (running) {

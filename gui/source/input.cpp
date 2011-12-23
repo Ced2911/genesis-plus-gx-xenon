@@ -291,7 +291,7 @@ static uint16_t PAD_ButtonsDown(int ictrl) {
 
     if (PUSHED(logo)) {
         btn |= PAD_BUTTON_LOGO;
-//        enableCapture();
+        enableCapture();
     }
 
     if (PUSHED(rb)) {

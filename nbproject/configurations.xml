@@ -3,14 +3,10 @@
   <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
     <df name="genesis-plus-gx" root="Z:/xenon/share/genesis-plus-gx">
       <df name="build">
-        <in>__xenon_bg_png.h</in>
-        <in>_xenon_bg_png.h</in>
         <in>bg_file_selection_entry_png.h</in>
         <in>bg_file_selection_png.h</in>
-        <in>bg_music_ogg.h</in>
         <in>bg_options_entry_png.h</in>
         <in>bg_options_png.h</in>
-        <in>bg_png.h</in>
         <in>button_click_pcm.h</in>
         <in>button_gamesave_blank_png.h</in>
         <in>button_gamesave_over_png.h</in>
@@ -20,6 +16,7 @@
         <in>button_over_pcm.h</in>
         <in>button_over_png.h</in>
         <in>button_png.h</in>
+        <in>debug_xenon_bg_png.h</in>
         <in>dialogue_box_png.h</in>
         <in>en_lang.h</in>
         <in>folder_png.h</in>
