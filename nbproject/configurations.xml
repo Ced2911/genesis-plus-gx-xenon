@@ -12,6 +12,9 @@
         <in>bg_options_png.h</in>
         <in>bg_png.h</in>
         <in>button_click_pcm.h</in>
+        <in>button_gamesave_blank_png.h</in>
+        <in>button_gamesave_over_png.h</in>
+        <in>button_gamesave_png.h</in>
         <in>button_large_over_png.h</in>
         <in>button_large_png.h</in>
         <in>button_over_pcm.h</in>
@@ -93,6 +96,7 @@
             <in>gui_imagedata.cpp</in>
             <in>gui_keyboard.cpp</in>
             <in>gui_optionbrowser.cpp</in>
+            <in>gui_savebrowser.cpp</in>
             <in>gui_sound.cpp</in>
             <in>gui_text.cpp</in>
             <in>gui_trigger.cpp</in>

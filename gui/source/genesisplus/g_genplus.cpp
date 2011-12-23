@@ -41,19 +41,19 @@ extern "C" {
 int WindowPrompt(const char *title, const char *msg, const char *btn1Label, const char *btn2Label);
 void ErrorPrompt(const char *msg);
 
-int running = 0;
+static int running = 1;
+static int gen_exit = 0;
 
 void osd_input_Update() {
     //usb_do_poll();
 }
 
-
 extern "C" void osd_call(int i) {
     SYSInputReset();
     if (i == -1) {
-        if (WindowPrompt("Leave", "Are you sure to continue to the menu ?", "Ok", "Cancel")) {
+//        if (WindowPrompt("Leave", "Are you sure to continue to the menu ?", "Ok", "Cancel")) {
             running = 0;
-        }
+//        }
     }
 }
 
@@ -65,7 +65,7 @@ void FirstRun() {
     SYSMenuInit();
 }
 
-void SetGenConfig() {
+static void SetGenConfig() {
     config.filter = gensettings.video_filter;
     config.lock_on = gensettings.lock_on;
 
@@ -84,7 +84,9 @@ void SetGenConfig() {
     config.ym2413 = gensettings.ym2413;
 }
 
-static void save_sram(const char *dest) {
+uint8_t state_buf[STATE_SIZE];
+
+void save_sram(const char *dest) {
     FILE *f = fopen(dest, "w+b");
     if (f != NULL) {
         fwrite(sram.sram, 0x10000, 1, f);
@@ -92,16 +94,15 @@ static void save_sram(const char *dest) {
     }
 }
 
-static void load_sram(const char *dest) {
+void load_sram(const char *dest) {
     FILE *f = fopen(dest, "rb");
     if (f) {
         fread(sram.sram, 0x10000, 1, f);
         fclose(f);
     }
 }
-uint8_t state_buf[STATE_SIZE];
 
-static void save_state(const char *dest) {
+void save_state(const char *dest) {
     FILE *f = fopen(dest, "w+b");
     if (f) {
         state_save(state_buf);
@@ -111,7 +112,7 @@ static void save_state(const char *dest) {
     }
 }
 
-static void load_state(const char *dest) {
+void load_state(const char *dest) {
     FILE *f = fopen(dest, "rb");
     if (f) {
         fread(&state_buf, STATE_SIZE, 1, f);
@@ -121,15 +122,11 @@ static void load_state(const char *dest) {
     }
 }
 
-int genesis_main(const char *root, const char * dir, const char *filename) {
-    char romname[1024];
-    char sramname[1024];
-    char statename[1024];
+static char romname[1024];
+static char sramname[1024];
+static char statename[1024];
 
-    sprintf(romname, "%s/%s/%s", root, dir, filename);
-    sprintf(sramname, "%s/%s/%s.srm", root, dir, filename);
-    sprintf(statename, "%s/%s/%s.gpz", root, dir, filename);
-
+int genesis_init() {
     static int bfirstRun = true;
 
     if (bfirstRun) {
@@ -159,6 +156,8 @@ int genesis_main(const char *root, const char * dir, const char *filename) {
 
     // now running
     running = 1;
+    // not exit
+    gen_exit = 0;
 
     SYSInputReset();
 
@@ -197,11 +196,10 @@ int genesis_main(const char *root, const char * dir, const char *filename) {
 
     printf("sramname\r\n");
     /* load SRAM */
-    if(gensettings.saves&SAVES_SRAM)
-    {
+    if (gensettings.saves & SAVES_SRAM) {
         load_sram(sramname);
     }
-    
+
 
     /* reset emulation */
     system_reset();
@@ -213,12 +211,10 @@ int genesis_main(const char *root, const char * dir, const char *filename) {
         load_state(statename);
     }
 
-    /* emulation loop */
-    while (running) {
-        system_frame(0);
-        SYSUpdate();
-    }
+    return 0;
+}
 
+static void genesis_leave() {
     if (gensettings.saves & SAVES_SRAM) {
         /* save SRAM */
         save_sram(sramname);
@@ -232,6 +228,53 @@ int genesis_main(const char *root, const char * dir, const char *filename) {
     //    audio_shutdown();
     error_shutdown();
     free(cart.rom);
+}
 
+static void genesis_loop() {
+    // set genesis config
+    SetGenConfig();
+    // restore viewport
+    update_texture_viewport(bitmap.viewport.w, bitmap.viewport.h);
+    
+    /* emulation loop */
+    while (running) {
+        system_frame(0);
+        SYSUpdate();
+    }
+
+    if (gen_exit == 1)
+        genesis_leave();
+}
+
+char ROMFilename[256];
+char foldername[1024];
+
+int genesis_main(const char *root, const char * dir, const char *filename) {
+    sprintf(romname, "%s/%s/%s", root, dir, filename);
+    sprintf(sramname, "%s/%s/%s.srm", root, dir, filename);
+    sprintf(statename, "%s/%s/%s.gpz", root, dir, filename);
+
+    strcpy(ROMFilename,filename);
+    strcpy(foldername,dir);
+    
     return 0;
+}
+
+void genesis_reset() {
+    /* restart emulation */
+    system_init();
+    system_reset();
+}
+
+void genesis_resume() {
+    running = 1;
+    gen_exit = 0;
+        
+    genesis_loop();
+}
+
+void genesis_exit() {
+    gen_exit = 1;
+    running = 0;
+    genesis_loop();
 }

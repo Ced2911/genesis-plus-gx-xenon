@@ -48,9 +48,11 @@ enum {
     FILE_ROM,
     FILE_CHEAT
 };
+
+extern char foldername[1024];
+
 bool MakeFilePath(char filepath[], int type, char * filename, int filenum) {
     char file[512];
-    char folder[1024];
     char ext[4];
     char temppath[MAXPATHLEN];
 
@@ -73,10 +75,9 @@ bool MakeFilePath(char filepath[], int type, char * filename, int filenum) {
         switch (type) {
             case FILE_SRAM:
             case FILE_SNAPSHOT:
-                sprintf(folder, "genesis");
 
                 if (type == FILE_SRAM) sprintf(ext, "srm");
-                else sprintf(ext, "frz");
+                else sprintf(ext, "gpz");
 
                 if (filenum >= -1) {
                     if (filenum == -1)
@@ -90,11 +91,10 @@ bool MakeFilePath(char filepath[], int type, char * filename, int filenum) {
                 }
                 break;
             case FILE_CHEAT:
-                sprintf(folder, "genesis");
                 sprintf(file, "%s.cht", "test");
                 break;
         }
-        sprintf(temppath, "%s%s/%s", "uda:/", folder, file);
+        sprintf(temppath, "uda:/%s/%s", foldername, file);
     }
     CleanupPath(temppath); // cleanup path
     snprintf(filepath, MAXPATHLEN, "%s", temppath);

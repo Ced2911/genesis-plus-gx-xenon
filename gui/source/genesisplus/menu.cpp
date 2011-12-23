@@ -27,6 +27,26 @@
 
 #include "genesis_settings.h"
 
+int last_menu = MENU_NONE;
+
+// genesis surface
+extern "C" struct XenosSurface * g_pTexture;
+
+// g_genplus.cpp
+void save_sram(const char *dest);
+void load_sram(const char *dest);
+void save_state(const char *dest);
+void load_state(const char *dest);
+int genesis_main(const char * root, const char * dir, const char *filename);
+int genesis_init();
+void genesis_exit();
+void genesis_resume();
+void genesis_reset();
+
+//static char ROMFilename[] = "Sonic the Hedgehog 3 (U) [!].zip";
+extern char ROMFilename[256];
+extern char foldername[1024];
+
 #define THREAD_SLEEP 100
 
 static GuiImageData * pointer[4];
@@ -344,127 +364,16 @@ static void OnScreenKeyboard(char * var, u16 maxlen) {
     ResumeGui();
 }
 
+static int MenuEmulation() {
+    int menu = MENU_IN_GAME;
 
-// genesis surface
-extern "C" struct XenosSurface * g_pTexture;
-
-static int _MenuInGame() {
-    int menu = MENU_NONE;
-
-    int max_saves_states_slot = 10;
-    int selected_slot = 0;
-
-
-    GuiText titleTxt("Genesis plus xenon - In game menu", 28, ColorGrey);
-    titleTxt.SetAlignment(ALIGN_LEFT, ALIGN_TOP);
-    titleTxt.SetPosition(50, 50);
-
-    GuiTrigger trigA;
-    //	trigA.SetSimpleTrigger(-1, WPAD_BUTTON_A | WPAD_CLASSIC_BUTTON_A, PAD_BUTTON_A);
-    trigA.SetSimpleTrigger(-1, 0, PAD_BUTTON_A);
-
-    GuiImage genesis_display(g_pTexture, screenwidth, screenheight);
-
-    GuiImageData btnOutline(xenon_button_png);
-    GuiImageData btnOutlineOver(xenon_button_over_png);
-
-    GuiImage fileBtnImg(&btnOutline);
-    GuiImage fileBtnImgOver(&btnOutlineOver);
-
-    GuiButton saveStatesBtn(btnOutline.GetWidth(), btnOutline.GetHeight());
-    GuiText SaveStateTxt("Save states", 22, ColorGrey2);
-    SaveStateTxt.SetWrap(true, btnOutline.GetWidth() - 30);
-
-    GuiImage saveBtnImg(&btnOutline);
-    GuiImage saveBtnImgOver(&btnOutlineOver);
-
-    saveStatesBtn.SetAlignment(ALIGN_LEFT, ALIGN_TOP);
-    saveStatesBtn.SetPosition(50, 120);
-    saveStatesBtn.SetLabel(&SaveStateTxt);
-    saveStatesBtn.SetImage(&saveBtnImg);
-    saveStatesBtn.SetImageOver(&saveBtnImgOver);
-    saveStatesBtn.SetTrigger(&trigA);
-    saveStatesBtn.SetEffectGrow();
-
-
-    GuiButton loadStatesBtn(btnOutline.GetWidth(), btnOutline.GetHeight());
-    GuiText LoadStateTxt("Load states", 22, ColorGrey2);
-    LoadStateTxt.SetWrap(true, btnOutline.GetWidth() - 30);
-
-    GuiImage loadBtnImg(&btnOutline);
-    GuiImage loadBtnImgOver(&btnOutlineOver);
-
-    loadStatesBtn.SetAlignment(ALIGN_LEFT, ALIGN_TOP);
-    loadStatesBtn.SetPosition(50, 200);
-    loadStatesBtn.SetLabel(&LoadStateTxt);
-    loadStatesBtn.SetImage(&loadBtnImg);
-    loadStatesBtn.SetImageOver(&loadBtnImgOver);
-    loadStatesBtn.SetTrigger(&trigA);
-    loadStatesBtn.SetEffectGrow();
-
-    //    next states
-
-    GuiButton NextStatesBtn(btnOutline.GetWidth(), btnOutline.GetHeight());
-    GuiText NextStateTxt("Next states", 22, ColorGrey2);
-    NextStateTxt.SetWrap(true, btnOutline.GetWidth() - 30);
-
-    GuiImage NextBtnImg(&btnOutline);
-    GuiImage NextBtnImgOver(&btnOutlineOver);
-
-    NextStatesBtn.SetAlignment(ALIGN_LEFT, ALIGN_MIDDLE);
-    NextStatesBtn.SetPosition(50, 200);
-    NextStatesBtn.SetLabel(&NextStateTxt);
-    NextStatesBtn.SetImage(&NextBtnImg);
-    NextStatesBtn.SetImageOver(&NextBtnImgOver);
-    NextStatesBtn.SetTrigger(&trigA);
-    NextStatesBtn.SetEffectGrow();
-
-    //    prev states
-
-    GuiButton PrevStatesBtn(btnOutline.GetWidth(), btnOutline.GetHeight());
-    GuiText PrevStateTxt("Prev states", 22, ColorGrey2);
-    PrevStateTxt.SetWrap(true, btnOutline.GetWidth() - 30);
-
-    GuiImage PrevBtnImg(&btnOutline);
-    GuiImage PrevBtnImgOver(&btnOutlineOver);
-
-    PrevStatesBtn.SetAlignment(ALIGN_LEFT, ALIGN_MIDDLE);
-    PrevStatesBtn.SetPosition(50, 200);
-    PrevStatesBtn.SetLabel(&PrevStateTxt);
-    PrevStatesBtn.SetImage(&PrevBtnImg);
-    PrevStatesBtn.SetImageOver(&PrevBtnImgOver);
-    PrevStatesBtn.SetTrigger(&trigA);
-    PrevStatesBtn.SetEffectGrow();
-
-
-    HaltGui();
-
-    GuiWindow w(screenwidth, screenheight);
-
-    w.Append(&genesis_display);
-    w.Append(&titleTxt);
-    w.Append(&loadStatesBtn);
-    w.Append(&saveStatesBtn);
-    w.Append(&NextStatesBtn);
-    w.Append(&PrevStatesBtn);
-
-
-    mainWindow->Append(&w);
-    ResumeGui();
-
-    while (menu == MENU_NONE) {
-        UGUI();
-        usleep(THREAD_SLEEP);
-    }
-
-    HaltGui();
-    mainWindow->Remove(&w);
+    // resume start emulation
+    genesis_resume();
 
     return menu;
 }
 
 
-static char ROMFilename[] = "test.smd";
 
 /****************************************************************************
  * FindGameSaveNum
@@ -473,6 +382,7 @@ static char ROMFilename[] = "test.smd";
  * Returns -1 if none is found
  ***************************************************************************/
 static int FindGameSaveNum(char * savefile, int device) {
+    printf("savefile => %s\r\n", savefile);
     int n = -1;
     int romlen = strlen(ROMFilename);
     int savelen = strlen(savefile);
@@ -495,7 +405,240 @@ static int FindGameSaveNum(char * savefile, int device) {
         return -1;
 }
 
+
+
+/****************************************************************************
+ * MenuInGame
+ *
+ * Menu displayed when returning to the menu from in-game.
+ ***************************************************************************/
 static int MenuInGame() {
+    last_menu = MENU_IN_GAME;
+    int menu = MENU_NONE;
+
+    GuiTrigger trigA;
+    //	trigA.SetSimpleTrigger(-1, WPAD_BUTTON_A | WPAD_CLASSIC_BUTTON_A, PAD_BUTTON_A);
+    trigA.SetSimpleTrigger(-1, 0, PAD_BUTTON_A);
+
+    GuiText titleTxt("ttt", 22, (GXColor) {
+        255, 255, 255, 255
+    });
+    titleTxt.SetAlignment(ALIGN_LEFT, ALIGN_TOP);
+    titleTxt.SetPosition(50, 50);
+
+    GuiSound btnSoundOver(button_over_pcm, button_over_pcm_size, SOUND_PCM);
+    GuiSound btnSoundClick(button_click_pcm, button_click_pcm_size, SOUND_PCM);
+    GuiImageData btnOutline(xenon_button_png);
+    GuiImageData btnOutlineOver(xenon_button_over_png);
+    GuiImageData btnCloseOutline(xenon_button_png);
+    GuiImageData btnCloseOutlineOver(xenon_button_over_png);
+    GuiImageData btnLargeOutline(xenon_button_large_png);
+    GuiImageData btnLargeOutlineOver(xenon_button_large_over_png);
+    //	GuiImageData iconGameSettings(icon_game_settings_png);
+    //	GuiImageData iconLoad(icon_game_load_png);
+    //	GuiImageData iconSave(icon_game_save_png);
+    //	GuiImageData iconReset(icon_game_reset_png);
+
+    //	GuiImageData battery(battery_png);
+    //	GuiImageData batteryRed(battery_red_png);
+    //	GuiImageData batteryBar(battery_bar_png);
+
+    GuiTrigger trigHome;
+    trigHome.SetButtonOnlyTrigger(-1, WPAD_BUTTON_HOME | WPAD_CLASSIC_BUTTON_HOME, 0);
+
+    GuiText saveBtnTxt("Save", 22, (GXColor) {
+        0, 0, 0, 255
+    });
+    GuiImage saveBtnImg(&btnLargeOutline);
+    GuiImage saveBtnImgOver(&btnLargeOutlineOver);
+    //	GuiImage saveBtnIcon(&iconSave);
+    GuiButton saveBtn(btnLargeOutline.GetWidth(), btnLargeOutline.GetHeight());
+    saveBtn.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
+    saveBtn.SetPosition(-125, 120);
+    saveBtn.SetLabel(&saveBtnTxt);
+    saveBtn.SetImage(&saveBtnImg);
+    saveBtn.SetImageOver(&saveBtnImgOver);
+    //	saveBtn.SetIcon(&saveBtnIcon);
+    saveBtn.SetSoundOver(&btnSoundOver);
+    saveBtn.SetSoundClick(&btnSoundClick);
+    saveBtn.SetTrigger(&trigA);
+    //    saveBtn.SetTrigger(trig2);
+    saveBtn.SetEffectGrow();
+
+    GuiText loadBtnTxt("Load", 22, (GXColor) {
+        0, 0, 0, 255
+    });
+    GuiImage loadBtnImg(&btnLargeOutline);
+    GuiImage loadBtnImgOver(&btnLargeOutlineOver);
+    //	GuiImage loadBtnIcon(&iconLoad);
+    GuiButton loadBtn(btnLargeOutline.GetWidth(), btnLargeOutline.GetHeight());
+    loadBtn.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
+    loadBtn.SetPosition(125, 120);
+    loadBtn.SetLabel(&loadBtnTxt);
+    loadBtn.SetImage(&loadBtnImg);
+    loadBtn.SetImageOver(&loadBtnImgOver);
+    //	loadBtn.SetIcon(&loadBtnIcon);
+    loadBtn.SetSoundOver(&btnSoundOver);
+    loadBtn.SetSoundClick(&btnSoundClick);
+    loadBtn.SetTrigger(&trigA);
+    //    loadBtn.SetTrigger(trig2);
+    loadBtn.SetEffectGrow();
+
+    GuiText resetBtnTxt("Reset", 22, (GXColor) {
+        0, 0, 0, 255
+    });
+    GuiImage resetBtnImg(&btnLargeOutline);
+    GuiImage resetBtnImgOver(&btnLargeOutlineOver);
+    //	GuiImage resetBtnIcon(&iconReset);
+    GuiButton resetBtn(btnLargeOutline.GetWidth(), btnLargeOutline.GetHeight());
+    resetBtn.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
+    resetBtn.SetPosition(125, 250);
+    resetBtn.SetLabel(&resetBtnTxt);
+    resetBtn.SetImage(&resetBtnImg);
+    resetBtn.SetImageOver(&resetBtnImgOver);
+    //    resetBtn.SetIcon(&resetBtnIcon);
+    resetBtn.SetSoundOver(&btnSoundOver);
+    resetBtn.SetSoundClick(&btnSoundClick);
+    resetBtn.SetTrigger(&trigA);
+    //    resetBtn.SetTrigger(trig2);
+    resetBtn.SetEffectGrow();
+
+    GuiText gameSettingsBtnTxt("Game Settings", 22, (GXColor) {
+        0, 0, 0, 255
+    });
+    gameSettingsBtnTxt.SetWrap(true, btnLargeOutline.GetWidth() - 20);
+    GuiImage gameSettingsBtnImg(&btnLargeOutline);
+    GuiImage gameSettingsBtnImgOver(&btnLargeOutlineOver);
+    //	GuiImage gameSettingsBtnIcon(&iconGameSettings);
+    GuiButton gameSettingsBtn(btnLargeOutline.GetWidth(), btnLargeOutline.GetHeight());
+    gameSettingsBtn.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
+    gameSettingsBtn.SetPosition(-125, 250);
+    gameSettingsBtn.SetLabel(&gameSettingsBtnTxt);
+    gameSettingsBtn.SetImage(&gameSettingsBtnImg);
+    gameSettingsBtn.SetImageOver(&gameSettingsBtnImgOver);
+    //	gameSettingsBtn.SetIcon(&gameSettingsBtnIcon);
+    gameSettingsBtn.SetSoundOver(&btnSoundOver);
+    gameSettingsBtn.SetSoundClick(&btnSoundClick);
+    gameSettingsBtn.SetTrigger(&trigA);
+    //    gameSettingsBtn.SetTrigger(trig2);
+    gameSettingsBtn.SetEffectGrow();
+
+    GuiText mainmenuBtnTxt("Main Menu", 22, (GXColor) {
+        0, 0, 0, 255
+    });
+    GuiImage mainmenuBtnImg(&btnOutline);
+    GuiImage mainmenuBtnImgOver(&btnOutlineOver);
+    GuiButton mainmenuBtn(btnOutline.GetWidth(), btnOutline.GetHeight());
+    mainmenuBtn.SetAlignment(ALIGN_CENTRE, ALIGN_BOTTOM);
+    mainmenuBtn.SetPosition(0, -35);
+    mainmenuBtn.SetLabel(&mainmenuBtnTxt);
+    mainmenuBtn.SetImage(&mainmenuBtnImg);
+    mainmenuBtn.SetImageOver(&mainmenuBtnImgOver);
+    mainmenuBtn.SetSoundOver(&btnSoundOver);
+    mainmenuBtn.SetSoundClick(&btnSoundClick);
+    mainmenuBtn.SetTrigger(&trigA);
+    //    mainmenuBtn.SetTrigger(trig2);
+    mainmenuBtn.SetEffectGrow();
+
+    GuiText closeBtnTxt("Close", 20, (GXColor) {
+        0, 0, 0, 255
+    });
+    GuiImage closeBtnImg(&btnCloseOutline);
+    GuiImage closeBtnImgOver(&btnCloseOutlineOver);
+    GuiButton closeBtn(btnCloseOutline.GetWidth(), btnCloseOutline.GetHeight());
+    closeBtn.SetAlignment(ALIGN_RIGHT, ALIGN_TOP);
+    closeBtn.SetPosition(-50, 35);
+    closeBtn.SetLabel(&closeBtnTxt);
+    closeBtn.SetImage(&closeBtnImg);
+    closeBtn.SetImageOver(&closeBtnImgOver);
+    closeBtn.SetSoundOver(&btnSoundOver);
+    closeBtn.SetSoundClick(&btnSoundClick);
+    closeBtn.SetTrigger(&trigA);
+    //    closeBtn.SetTrigger(trig2);
+    closeBtn.SetTrigger(&trigHome);
+    closeBtn.SetEffectGrow();
+
+    HaltGui();
+    GuiWindow w(screenwidth, screenheight);
+    w.Append(&titleTxt);
+    w.Append(&saveBtn);
+    w.Append(&loadBtn);
+    w.Append(&resetBtn);
+    w.Append(&gameSettingsBtn);
+
+    w.Append(&mainmenuBtn);
+    w.Append(&closeBtn);
+
+    //	btnLogo->SetAlignment(ALIGN_RIGHT, ALIGN_BOTTOM);
+    //	btnLogo->SetPosition(-50, -40);
+    mainWindow->Append(&w);
+
+    ResumeGui();
+
+    //	if(lastMenu == MENU_NONE)
+    //		AutoSave();
+
+    while (menu == MENU_NONE) {
+        UGUI();
+        usleep(THREAD_SLEEP);
+
+        if (saveBtn.GetState() == STATE_CLICKED) {
+            menu = MENU_GAME_SAVE;
+        } else if (loadBtn.GetState() == STATE_CLICKED) {
+            menu = MENU_GAME_LOAD;
+        } else if (resetBtn.GetState() == STATE_CLICKED) {
+            if (WindowPrompt("Reset Game", "Are you sure that you want to reset this game? Any unsaved progress will be lost.", "OK", "Cancel")) {
+                menu = MENU_EMULATION;
+                genesis_reset();
+            }
+        } else if (gameSettingsBtn.GetState() == STATE_CLICKED) {
+            menu = MENU_OPTIONS;
+        } else if (mainmenuBtn.GetState() == STATE_CLICKED) {
+            if (WindowPrompt("Quit Game", "Quit this game? Any unsaved progress will be lost.", "OK", "Cancel")) {
+                HaltGui();
+                //                mainWindow->Remove(gameScreenImg);
+                //                delete gameScreenImg;
+                //                delete gameScreen;
+                //                gameScreen = NULL;
+                //                free(gameScreenPng);
+                //                gameScreenPng = NULL;
+                //
+                //                gameScreenImg = new GuiImage(screenwidth, screenheight, (GXColor) {
+                //                    175, 200, 215, 255});
+                //                gameScreenImg->ColorStripe(10);
+                //                mainWindow->Insert(gameScreenImg, 0);
+                ResumeGui();
+#ifndef NO_SOUND
+                bgMusic->Play(); // startup music
+#endif
+                genesis_exit();
+
+                menu = MENU_MAIN;
+            }
+        } else if (closeBtn.GetState() == STATE_CLICKED) {
+            //            menu = MENU_EXIT;
+            menu = MENU_EMULATION;
+
+//            exitSound->Play();
+//            bgTopImg->SetEffect(EFFECT_SLIDE_TOP | EFFECT_SLIDE_OUT, 15);
+            closeBtn.SetEffect(EFFECT_SLIDE_TOP | EFFECT_SLIDE_OUT, 15);
+            titleTxt.SetEffect(EFFECT_SLIDE_TOP | EFFECT_SLIDE_OUT, 15);
+            mainmenuBtn.SetEffect(EFFECT_SLIDE_BOTTOM | EFFECT_SLIDE_OUT, 15);
+//            bgBottomImg->SetEffect(EFFECT_SLIDE_BOTTOM | EFFECT_SLIDE_OUT, 15);
+//            btnLogo->SetEffect(EFFECT_SLIDE_BOTTOM | EFFECT_SLIDE_OUT, 15);
+
+            w.SetEffect(EFFECT_FADE, -15);
+            usleep(350000); // wait for effects to finish
+        }
+    }
+
+    HaltGui();
+
+    mainWindow->Remove(&w);
+    return menu;
+}
+
+static int MenuGameSaves(int action) {
 
     int menu = MENU_NONE;
     int ret;
@@ -508,7 +651,7 @@ static int MenuInGame() {
     struct stat filestat;
     struct tm * timeinfo;
 
-    int action = 0;
+    //int action = 1;
 
     //    int device = GCSettings.SaveMethod;
     //
@@ -587,16 +730,12 @@ static int MenuInGame() {
     mainWindow->Append(&titleTxt);
     ResumeGui();
 
-
-
     memset(&saves, 0, sizeof (saves));
 
-    sprintf(browser.dir, "%s%s", "uda:/", "genesis");
-    BrowseDevice("genesis","uda:/");
+    sprintf(browser.dir, "%s%s", "uda:/", foldername);
+    BrowseDevice(foldername, "uda:/");
 
-
-    // find matching files
-    //    AllocSaveBuffer();
+    printf("BrowseDevice => %d\r\n", browser.numEntries);
 
     for (i = 0; i < browser.numEntries; i++) {
         len2 = strlen(browserList[i].filename);
@@ -604,12 +743,13 @@ static int MenuInGame() {
         if (len2 < 6 || len2 - len < 5)
             continue;
 
-        if (strncmp(&browserList[i].filename[len2 - 4], ".srm", 4) == 0)
+        if (strncmp(&browserList[i].filename[len2 - 4], ".srm", 4) == 0) {
             type = FILE_SRAM;
-        else if (strncmp(&browserList[i].filename[len2 - 4], ".gpz", 4) == 0)
+        } else if (strncmp(&browserList[i].filename[len2 - 4], ".gpz", 4) == 0) {
             type = FILE_SNAPSHOT;
-        else
+        } else {
             continue;
+        }
 
         strcpy(tmp, browserList[i].filename);
         tmp[len2 - 4] = 0;
@@ -621,13 +761,13 @@ static int MenuInGame() {
             strcpy(saves.filename[j], browserList[i].filename);
 
             if (saves.type[j] == FILE_SNAPSHOT) {
-//                sprintf(scrfile, "%s%s/%s.png", pathPrefix[GCSettings.SaveMethod], GCSettings.SaveFolder, tmp);
+                //                sprintf(scrfile, "%s%s/%s.png", pathPrefix[GCSettings.SaveMethod], GCSettings.SaveFolder, tmp);
 
-//                memset(savebuffer, 0, SAVEBUFFERSIZE);
-//                if (LoadFile(scrfile, SILENT))
-//                    saves.previewImg[j] = new GuiImageData(savebuffer, 64, 48);
+                //                memset(savebuffer, 0, SAVEBUFFERSIZE);
+                //                if (LoadFile(scrfile, SILENT))
+                //                    saves.previewImg[j] = new GuiImageData(savebuffer, 64, 48);
             }
-            snprintf(filepath, 1024, "%s%s/%s", "uda:/", "genesis", saves.filename[j]);
+            snprintf(filepath, 1024, "uda:/%s/%s", foldername, saves.filename[j]);
             if (stat(filepath, &filestat) == 0) {
                 timeinfo = localtime(&filestat.st_mtime);
                 strftime(saves.date[j], 20, "%a %b %d", timeinfo);
@@ -663,7 +803,6 @@ static int MenuInGame() {
 
         // load or save game
         if (ret > -3) {
-            int result = 0;
 
             if (action == 0) // load
             {
@@ -671,13 +810,15 @@ static int MenuInGame() {
                 switch (saves.type[ret]) {
                     case FILE_SRAM:
                         //                        result = LoadSRAM(filepath, NOTSILENT);
+                        load_sram(filepath);
+                        menu = MENU_EMULATION;
                         break;
                     case FILE_SNAPSHOT:
                         //                        result = LoadSnapshot(filepath, NOTSILENT);
+                        load_state(filepath);
+                        menu = MENU_EMULATION;
                         break;
                 }
-                if (result)
-                    menu = MENU_EXIT;
             } else // save
             {
                 if (ret == -2) // new SRAM
@@ -689,7 +830,9 @@ static int MenuInGame() {
                     if (i < 100) {
                         MakeFilePath(filepath, FILE_SRAM, ROMFilename, i);
                         //                        SaveSRAM(filepath, NOTSILENT);
-                        //                        menu = MENU_GAME_SAVE;
+                        save_sram(filepath);
+                        menu = MENU_GAME_SAVE;
+
                     }
                 } else if (ret == -1) // new Snapshot
                 {
@@ -700,7 +843,8 @@ static int MenuInGame() {
                     if (i < 100) {
                         MakeFilePath(filepath, FILE_SNAPSHOT, ROMFilename, i);
                         //                        SaveSnapshot(filepath, NOTSILENT);
-                        //                        menu = MENU_GAME_SAVE;
+                        menu = MENU_GAME_SAVE;
+                        save_state(filepath);
                     }
                 } else // overwrite SRAM/Snapshot
                 {
@@ -708,26 +852,31 @@ static int MenuInGame() {
                     switch (saves.type[ret]) {
                         case FILE_SRAM:
                             //                            SaveSRAM(filepath, NOTSILENT);
+                            save_sram(filepath);
                             break;
                         case FILE_SNAPSHOT:
                             //                            SaveSnapshot(filepath, NOTSILENT);
+                            save_state(filepath);
                             break;
                     }
-                    //                    menu = MENU_GAME_SAVE;
+                    menu = MENU_GAME_SAVE;
                 }
             }
         }
 
         if (backBtn.GetState() == STATE_CLICKED) {
-            menu = MENU_SETTINGS;
+            // stop emulation ?
+            menu = MENU_IN_GAME;
         } else if (closeBtn.GetState() == STATE_CLICKED) {
-            menu = MENU_EXIT;
+            // resume emulation ?
+
+            menu = MENU_EMULATION;
 
             //            exitSound->Play();
             //            bgTopImg->SetEffect(EFFECT_SLIDE_TOP | EFFECT_SLIDE_OUT, 15);
-            //            closeBtn.SetEffect(EFFECT_SLIDE_TOP | EFFECT_SLIDE_OUT, 15);
-            //            titleTxt.SetEffect(EFFECT_SLIDE_TOP | EFFECT_SLIDE_OUT, 15);
-            //            backBtn.SetEffect(EFFECT_SLIDE_BOTTOM | EFFECT_SLIDE_OUT, 15);
+            closeBtn.SetEffect(EFFECT_SLIDE_TOP | EFFECT_SLIDE_OUT, 15);
+            titleTxt.SetEffect(EFFECT_SLIDE_TOP | EFFECT_SLIDE_OUT, 15);
+            backBtn.SetEffect(EFFECT_SLIDE_BOTTOM | EFFECT_SLIDE_OUT, 15);
             //            bgBottomImg->SetEffect(EFFECT_SLIDE_BOTTOM | EFFECT_SLIDE_OUT, 15);
             //            btnLogo->SetEffect(EFFECT_SLIDE_BOTTOM | EFFECT_SLIDE_OUT, 15);
 
@@ -875,9 +1024,10 @@ static int MenuBrowseDevice() {
                     ShutoffRumble();
                     fileBrowser.ResetState();
                     //mainWindow->SetState(STATE_DISABLED);
-                    extern int genesis_main(const char * root, const char * dir, const char *filename);
-                    genesis_main(rootdir, browser.dir, browserList[browser.selIndex].filename);
-                    menu = MENU_IN_GAME;
+
+                    menu = MENU_EMULATION;
+                    genesis_main(rootdir,browser.dir ,browserList[browser.selIndex].filename);
+                    genesis_init();
                     //mainWindow->SetState(STATE_DEFAULT);
                 }
             }
@@ -1045,7 +1195,14 @@ static int MenuOptions() {
         if (backBtn.GetState() == STATE_CLICKED) {
             //save settings
             SaveSettings(&gensettings);
-            menu = MENU_SETTINGS;
+            // 
+            printf("last_menu : %d\r\n",last_menu);
+            if(last_menu==MENU_IN_GAME){
+                InfoPrompt("Some settings need a reset to get applied");
+                menu = MENU_IN_GAME;
+            }
+            else
+                menu = MENU_SETTINGS;
         }
 
     }
@@ -1064,6 +1221,7 @@ static int MainMenu() {
         first_run = false;
     }
 
+    last_menu = MENU_NONE;
     int menu = MENU_NONE;
 
     GuiText titleTxt("Genesis Plus Xenon", 28, ColorGrey);
@@ -1250,6 +1408,16 @@ void MainMenu(int menu) {
                 break;
             case MENU_IN_GAME:
                 currentMenu = MenuInGame();
+                break;
+            case MENU_EMULATION:
+                currentMenu = MenuEmulation();
+                break;
+            case MENU_GAME_SAVE:
+                currentMenu = MenuGameSaves(1);
+                break;
+            case MENU_GAME_LOAD:
+                currentMenu = MenuGameSaves(0);
+                break;
             default: // unrecognized menu
                 currentMenu = MainMenu();
                 break;
