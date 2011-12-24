@@ -133,6 +133,9 @@ extern const u8 xenon_popup_png[];
 extern const u8 xenon_bg_png[];
 extern const u8 xenon_filebrowser_png[];
 extern const u8 xenon_scrollbar_png[];
+extern const u8 xenon_scrollbar_box_png[];
+extern const u8 xenon_scrollbar_arrowup_png[];
+extern const u8 xenon_scrollbar_arrowdown_png[];
 
 // btn
 extern const u8 xenon_button_png[];
@@ -147,4 +150,6 @@ extern const u8 xenon_bg_file_selection_entry_png[];
 extern const u8 button_gamesave_blank_png[];
 extern const u8 button_gamesave_over_png[];
 extern const u8 button_gamesave_png[];
+
+
 #endif

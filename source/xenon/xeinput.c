@@ -10,49 +10,49 @@
 static struct controller_data_s ctrl[MAX_INPUTS];
 static struct controller_data_s old_ctrl[MAX_INPUTS];
 
-void SYSInputReset(){
-    memset(ctrl,0,MAX_INPUTS*sizeof(struct controller_data_s));
-    memset(old_ctrl,0,MAX_INPUTS*sizeof(struct controller_data_s));
+void SYSInputReset() {
+    memset(ctrl, 0, MAX_INPUTS * sizeof (struct controller_data_s));
+    memset(old_ctrl, 0, MAX_INPUTS * sizeof (struct controller_data_s));
 }
 
 void SYSInputUpdate() {
-   
+
     usb_do_poll();
     int joynum = 0;
 
     for (joynum = 0; joynum < MAX_INPUTS; joynum++) {
 
-        get_controller_data(&ctrl[joynum],joynum);
-        
+        get_controller_data(&ctrl[joynum], joynum);
+
         /* reset input */
         input.pad[joynum] = 0;
-        
-/*
-        if(ctrl[joynum].logo){
-            if(old_ctrl[joynum].select != ctrl[joynum].select){
-                SYSSaveState();
-            }
-            if(old_ctrl[joynum].start != ctrl[joynum].start){
-                SYSLoadState();
-            }
-            if(old_ctrl[joynum].up != ctrl[joynum].up){
-                SYSSelectStates(SYSGetStatesNumber()+1);
-            }
-            if(old_ctrl[joynum].down != ctrl[joynum].down){
-                SYSSelectStates(SYSGetStatesNumber()-1);
-            }
-            if(ctrl[joynum].lb && ctrl[joynum].rb ){
-                system_init();
-                system_reset();
-            }
-        }
-        else
-*/
+
+        /*
+                if(ctrl[joynum].logo){
+                    if(old_ctrl[joynum].select != ctrl[joynum].select){
+                        SYSSaveState();
+                    }
+                    if(old_ctrl[joynum].start != ctrl[joynum].start){
+                        SYSLoadState();
+                    }
+                    if(old_ctrl[joynum].up != ctrl[joynum].up){
+                        SYSSelectStates(SYSGetStatesNumber()+1);
+                    }
+                    if(old_ctrl[joynum].down != ctrl[joynum].down){
+                        SYSSelectStates(SYSGetStatesNumber()-1);
+                    }
+                    if(ctrl[joynum].lb && ctrl[joynum].rb ){
+                        system_init();
+                        system_reset();
+                    }
+                }
+                else
+         */
         // ask to leave
-        if((old_ctrl[joynum].logo==1) && (ctrl[joynum].logo==0)){
+        if ((old_ctrl[joynum].logo == 1) && (ctrl[joynum].logo == 0)) {
             osd_call(-1);
         }
-        
+
         {
 
             switch (input.dev[joynum]) {
@@ -79,6 +79,6 @@ void SYSInputUpdate() {
                     break;
             }
         }
-        old_ctrl[joynum]=ctrl[joynum];
+        old_ctrl[joynum] = ctrl[joynum];
     }
 }

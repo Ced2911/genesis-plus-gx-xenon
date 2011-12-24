@@ -46,7 +46,8 @@ int LoadSettings(GenesisPlusSettings * settings) {
         settings->ym2413 = i;
     if ((i = iniparser_getint(ini, "core:saves", -1)) != -1)
         settings->saves = i;
-
+    if ((i = iniparser_getint(ini, "core:aspect", -1)) != -1)
+        settings->aspect_ratio = i;
     iniparser_freedict(ini);
     return 0;
 }
@@ -75,11 +76,12 @@ void SaveSettings(GenesisPlusSettings * settings) {
             "lockon     = %d ;\r\n"
             "ym2413     = %d ;\r\n"
             "saves      = %d ;\r\n"
+            "aspect     = %d ;\r\n"
             "\r\n"
             "\r\n"
             , settings->input_type, settings->device_type, settings->video_filter,
             settings->overscan, settings->region, settings->system, settings->lock_on,
-            settings->ym2413, settings->saves
+            settings->ym2413, settings->saves,settings->aspect_ratio
             );
     fclose(ini);
 
@@ -88,13 +90,25 @@ void SaveSettings(GenesisPlusSettings * settings) {
 void SetDefaultSettings(GenesisPlusSettings * settings) {
     settings->input_type = INPUT_MD_GAMEPAD;
     settings->device_type = DEVICE_PAD6B;
-    settings->video_filter = VF_NONE;
+    settings->video_filter = VF_2XSAI;
     settings->overscan = OVERSCAN_NO_BORDERS;
     settings->region = REGIONS_AUTO;
     settings->system = SYSTEM_AUTO;
     settings->lock_on = LOCKON_OFF;
     settings->ym2413 = YM2413_AUTO;
     settings->saves = SAVES_BOTH;
+    settings->aspect_ratio = ASPECT_RATIO_SCREECH;
+}
+
+void getAspectTypeString(int type, char* dest){
+   switch (type) {
+        case ASPECT_RATIO_4_3:
+            sprintf(dest, "4/3");
+            break;
+        case ASPECT_RATIO_SCREECH:
+            sprintf(dest, "Screech");
+            break;
+    } 
 }
 
 void getSaveTypeString(int type, char * dest) {
@@ -225,11 +239,19 @@ void getSystemTypeString(int type, char * dest) {
     }
 }
 
-void getVFTypeString(int i, char * dest) {
-    if (i)
-        sprintf(dest, "Blinear");
-    else
-        sprintf(dest, "Off");
+void getVFTypeString(int type, char * dest) {
+    
+    switch (type) {
+        case VF_NONE:
+            sprintf(dest, "None");
+            break;
+        case VF_BLINEAR:
+            sprintf(dest, "Blinear");
+            break;
+        case VF_2XSAI:
+            sprintf(dest, "2xSai");
+            break;
+    }
 }
 
 void getOverscanTypeString(int type, char * dest) {

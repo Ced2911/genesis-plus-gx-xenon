@@ -365,7 +365,7 @@ void SetRS() {
 void Draw() {
     SetRS();
 
-    Xe_DrawPrimitive(g_pVideoDevice, XE_PRIMTYPE_QUADLIST, 0, 1);
+    Xe_DrawPrimitive(g_pVideoDevice, XE_PRIMTYPE_RECTLIST, 0, 1);
     //nb_vertices += 4 * sizeof (DrawVerticeFormats);
     nb_vertices += 256; // fixe aligement
 }

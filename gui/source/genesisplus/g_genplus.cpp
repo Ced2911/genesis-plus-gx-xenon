@@ -41,6 +41,9 @@ extern "C" {
 int WindowPrompt(const char *title, const char *msg, const char *btn1Label, const char *btn2Label);
 void ErrorPrompt(const char *msg);
 
+char ROMFilename[256];
+char foldername[1024];
+
 static int running = 1;
 static int gen_exit = 0;
 
@@ -55,6 +58,13 @@ extern "C" void osd_call(int i) {
             running = 0;
 //        }
     }
+}
+
+extern "C" int useFullScreen(){
+    return gensettings.aspect_ratio;
+}
+extern "C" int getVideoFitler(){
+    return gensettings.video_filter;
 }
 
 void FirstRun() {
@@ -178,10 +188,14 @@ int genesis_init() {
 
     /* initialize Genesis virtual system */
     memset(&bitmap, 0, sizeof (t_bitmap));
-    bitmap.width = g_pTexture->width;
-    bitmap.height = g_pTexture->height;
-    bitmap.pitch = g_pTexture->wpitch;
+//    bitmap.width = g_pTexture->width;
+//    bitmap.height = g_pTexture->height;
+//    bitmap.pitch = g_pTexture->wpitch;
 
+    bitmap.width = 1024;
+    bitmap.height = 576;
+    bitmap.pitch = bitmap.width * 4;
+    
     bitmap.data = screen;
     bitmap.viewport.changed = 3;
 
@@ -219,9 +233,18 @@ static void genesis_leave() {
         /* save SRAM */
         save_sram(sramname);
     }
-
+    else{
+        if(WindowPrompt("Save", "Save SRAM?", "Save", "Don't Save")){
+            save_sram(sramname);
+        }
+    }
     if (gensettings.saves & SAVES_STATES) {
         save_state(statename);
+    }
+    else{
+        if(WindowPrompt("Save", "Save Save State?", "Save", "Don't Save")){
+            save_state(statename);
+        }
     }
 
     system_shutdown();
@@ -246,13 +269,12 @@ static void genesis_loop() {
         genesis_leave();
 }
 
-char ROMFilename[256];
-char foldername[1024];
-
 int genesis_main(const char *root, const char * dir, const char *filename) {
     sprintf(romname, "%s/%s/%s", root, dir, filename);
-    sprintf(sramname, "%s/%s/%s.srm", root, dir, filename);
-    sprintf(statename, "%s/%s/%s.gpz", root, dir, filename);
+    
+    // auto filename   
+    sprintf(sramname, "%s/%s/%s Auto.srm", root, dir, filename);
+    sprintf(statename, "%s/%s/%s Auto.gpz", root, dir, filename);
 
     strcpy(ROMFilename,filename);
     strcpy(foldername,dir);

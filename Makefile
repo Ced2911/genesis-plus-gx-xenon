@@ -23,7 +23,7 @@ GUI_INC         := gui/source gui/source/genesisplus
 TARGET		:=  $(notdir $(CURDIR))
 BUILD		:=  build
 DATA		:=  
-SOURCES		:=	$(GUI_SRC) source source/m68k source/z80 source/sound source/ntsc source/input_hw source/cart_hw source/cart_hw/svp source/xenon		
+SOURCES		:=	$(GUI_SRC) source source/m68k source/z80 source/sound source/ntsc source/input_hw source/cart_hw source/cart_hw/svp source/xenon source/xenon/filter
 INCLUDES	:=	$(GUI_INC) source source/m68k source/z80 source/sound source/ntsc source/input_hw  source/cart_hw source/cart_hw/svp source/xenon
 
 #---------------------------------------------------------------------------------

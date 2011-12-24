@@ -276,6 +276,16 @@
           <in>unzip.h</in>
         </df>
         <df name="xenon">
+          <df name="filter">
+            <in>common.h</in>
+            <in>hq2x.h</in>
+            <in>hq3x.cpp</in>
+            <in>hq3x.h</in>
+            <in>hqx.h</in>
+            <in>interp.h</in>
+            <in>vfilter.h</in>
+            <in>x_vfilter.cpp</in>
+          </df>
           <in>config.c</in>
           <in>config.h</in>
           <in>error.c</in>
@@ -286,6 +296,7 @@
           <in>main.h</in>
           <in>osd.h</in>
           <in>ps.h</in>
+          <in>tex2Sai.h</in>
           <in>unzip.c</in>
           <in>unzip.h</in>
           <in>vs.h</in>

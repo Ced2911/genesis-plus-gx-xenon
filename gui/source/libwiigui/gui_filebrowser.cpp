@@ -55,15 +55,15 @@ GuiFileBrowser::GuiFileBrowser(int w, int h) {
     scrollbarImg->SetAlignment(ALIGN_RIGHT, ALIGN_TOP);
     scrollbarImg->SetPosition(0, 30);
 
-    arrowDown = new GuiImageData(scrollbar_arrowdown_png);
+    arrowDown = new GuiImageData(xenon_scrollbar_arrowdown_png);
     arrowDownImg = new GuiImage(arrowDown);
     arrowDownOver = new GuiImageData(scrollbar_arrowdown_over_png);
     arrowDownOverImg = new GuiImage(arrowDownOver);
-    arrowUp = new GuiImageData(scrollbar_arrowup_png);
+    arrowUp = new GuiImageData(xenon_scrollbar_arrowup_png);
     arrowUpImg = new GuiImage(arrowUp);
     arrowUpOver = new GuiImageData(scrollbar_arrowup_over_png);
     arrowUpOverImg = new GuiImage(arrowUpOver);
-    scrollbarBox = new GuiImageData(scrollbar_box_png);
+    scrollbarBox = new GuiImageData(xenon_scrollbar_box_png);
     scrollbarBoxImg = new GuiImage(scrollbarBox);
     scrollbarBoxOver = new GuiImageData(scrollbar_box_over_png);
     scrollbarBoxOverImg = new GuiImage(scrollbarBoxOver);
@@ -99,7 +99,8 @@ GuiFileBrowser::GuiFileBrowser(int w, int h) {
     scrollbarBoxBtn->SetImageOver(scrollbarBoxOverImg);
     scrollbarBoxBtn->SetAlignment(ALIGN_RIGHT, ALIGN_TOP);
     scrollbarBoxBtn->SetMinY(0);
-    scrollbarBoxBtn->SetMaxY(130);
+//    scrollbarBoxBtn->SetMaxY(130);
+//    scrollbarBoxBtn->SetMaxY(360);
     scrollbarBoxBtn->SetSelectable(false);
     scrollbarBoxBtn->SetClickable(false);
     scrollbarBoxBtn->SetHoldable(true);
@@ -361,13 +362,17 @@ endNavigation:
         position = positionWiimote; // follow wiimote cursor
         scrollbarBoxBtn->SetPosition(0, position + 36);
     } else if (listChanged || numEntries != browser.numEntries) {
-        if (float((browser.pageIndex << 1)) / (float(FILE_PAGESIZE)) < 1.0) {
+        
+//        if (float((browser.pageIndex << 1)) / (float(FILE_PAGESIZE)) < 1.0) {
+        if ((browser.pageIndex)==0){
             position = 0;
         } else if (browser.pageIndex + FILE_PAGESIZE >= browser.numEntries) {
-            position = 130;
+            position = 380;
         } else {
-            position = 130 * (browser.pageIndex + FILE_PAGESIZE / 2) / (float) browser.numEntries;
-        }
+            position = 380 * (browser.pageIndex + FILE_PAGESIZE / 2) / (float) browser.numEntries;
+        } 
+        scrollbarBoxBtn->SetPosition(0, position + 36);
+        
         scrollbarBoxBtn->SetPosition(0, position + 36);
     }
 

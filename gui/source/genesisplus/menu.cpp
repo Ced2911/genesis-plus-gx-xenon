@@ -373,8 +373,6 @@ static int MenuEmulation() {
     return menu;
 }
 
-
-
 /****************************************************************************
  * FindGameSaveNum
  *
@@ -404,8 +402,6 @@ static int FindGameSaveNum(char * savefile, int device) {
     else
         return -1;
 }
-
-
 
 /****************************************************************************
  * MenuInGame
@@ -605,13 +601,13 @@ static int MenuInGame() {
             //            menu = MENU_EXIT;
             menu = MENU_EMULATION;
 
-//            exitSound->Play();
-//            bgTopImg->SetEffect(EFFECT_SLIDE_TOP | EFFECT_SLIDE_OUT, 15);
+            //            exitSound->Play();
+            //            bgTopImg->SetEffect(EFFECT_SLIDE_TOP | EFFECT_SLIDE_OUT, 15);
             closeBtn.SetEffect(EFFECT_SLIDE_TOP | EFFECT_SLIDE_OUT, 15);
             titleTxt.SetEffect(EFFECT_SLIDE_TOP | EFFECT_SLIDE_OUT, 15);
             mainmenuBtn.SetEffect(EFFECT_SLIDE_BOTTOM | EFFECT_SLIDE_OUT, 15);
-//            bgBottomImg->SetEffect(EFFECT_SLIDE_BOTTOM | EFFECT_SLIDE_OUT, 15);
-//            btnLogo->SetEffect(EFFECT_SLIDE_BOTTOM | EFFECT_SLIDE_OUT, 15);
+            //            bgBottomImg->SetEffect(EFFECT_SLIDE_BOTTOM | EFFECT_SLIDE_OUT, 15);
+            //            btnLogo->SetEffect(EFFECT_SLIDE_BOTTOM | EFFECT_SLIDE_OUT, 15);
 
             w.SetEffect(EFFECT_FADE, -15);
             usleep(350000); // wait for effects to finish
@@ -882,7 +878,6 @@ static int MenuGameSaves(int action) {
     return menu;
 }
 
-
 /****************************************************************************
  * MenuBrowseDevice
  ***************************************************************************/
@@ -971,7 +966,7 @@ static int MenuBrowseDevice() {
                     //mainWindow->SetState(STATE_DISABLED);
 
                     menu = MENU_EMULATION;
-                    genesis_main(rootdir,browser.dir ,browserList[browser.selIndex].filename);
+                    genesis_main(rootdir, browser.dir, browserList[browser.selIndex].filename);
                     genesis_init();
                     //mainWindow->SetState(STATE_DEFAULT);
                 }
@@ -1014,6 +1009,8 @@ static int MenuOptions() {
     sprintf(options.name[MO_YM2413], "YM2413");
     i++;
     sprintf(options.name[MO_SAVE], "Save");
+    i++;
+    sprintf(options.name[MO_ASPECT_RATIO], "Aspect Ratio");
     i++;
     options.length = i;
 
@@ -1062,6 +1059,9 @@ static int MenuOptions() {
         ret = optionBrowser.GetClickedOption();
 
         switch (ret) {
+            case MO_ASPECT_RATIO:
+                gensettings.aspect_ratio++;
+                break;
             case MO_INPUT:
                 gensettings.input_type++;
                 break;
@@ -1120,6 +1120,8 @@ static int MenuOptions() {
                 gensettings.ym2413 = 0;
             if (gensettings.saves >= SAVES_MAX)
                 gensettings.saves = 0;
+            if (gensettings.aspect_ratio >= ASPECT_MAX)
+                gensettings.aspect_ratio = 0;
 
             // update strings
             getInputTypeString(gensettings.input_type, options.value[MO_INPUT]);
@@ -1131,7 +1133,7 @@ static int MenuOptions() {
             getLockOnTypeString(gensettings.lock_on, options.value[MO_LOCKON]);
             getYM2413TypeString(gensettings.ym2413, options.value[MO_YM2413]);
             getSaveTypeString(gensettings.saves, options.value[MO_SAVE]);
-
+            getAspectTypeString(gensettings.aspect_ratio, options.value[MO_ASPECT_RATIO]);
 
             // Update label
             optionBrowser.TriggerUpdate();
@@ -1141,12 +1143,11 @@ static int MenuOptions() {
             //save settings
             SaveSettings(&gensettings);
             // 
-            printf("last_menu : %d\r\n",last_menu);
-            if(last_menu==MENU_IN_GAME){
+            printf("last_menu : %d\r\n", last_menu);
+            if (last_menu == MENU_IN_GAME) {
                 InfoPrompt("Some settings need a reset to get applied");
                 menu = MENU_IN_GAME;
-            }
-            else
+            } else
                 menu = MENU_SETTINGS;
         }
 
@@ -1205,8 +1206,8 @@ static int MainMenu() {
     GuiImage optionBtnImg(&btnLargeOutline);
     GuiImage optionBtnImgOver(&btnLargeOutlineOver);
     GuiButton optionBtn(btnLargeOutline.GetWidth(), btnLargeOutline.GetHeight());
-    optionBtn.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
-    optionBtn.SetPosition(0, 120);
+    optionBtn.SetAlignment(ALIGN_LEFT, ALIGN_TOP);
+    optionBtn.SetPosition(250, 120);
     optionBtn.SetLabel(&optionBtnTxt);
     optionBtn.SetImage(&optionBtnImg);
     optionBtn.SetImageOver(&optionBtnImgOver);
@@ -1261,7 +1262,7 @@ static int MainMenu() {
     w.Append(&titleTxt);
     w.Append(&fileBtn);
     w.Append(&optionBtn);
-    w.Append(&savingBtn);
+//    w.Append(&savingBtn);
     // w.Append(&cheatsBtn); // unused
     w.Append(&exitBtn);
 
@@ -1336,9 +1337,9 @@ void MainMenu(int menu) {
 
     ResumeGui();
 
-//    bgMusic = new GuiSound(bg_music_ogg, bg_music_ogg_size, SOUND_OGG);
-//    bgMusic->SetVolume(50);
-//    bgMusic->Play(); // startup music
+    //    bgMusic = new GuiSound(bg_music_ogg, bg_music_ogg_size, SOUND_OGG);
+    //    bgMusic->SetVolume(50);
+    //    bgMusic->Play(); // startup music
 
     while (currentMenu != MENU_EXIT) {
         switch (currentMenu) {
@@ -1378,8 +1379,8 @@ void MainMenu(int menu) {
 
     HaltGui();
 
-//    bgMusic->Stop();
-//    delete bgMusic;
+    //    bgMusic->Stop();
+    //    delete bgMusic;
     delete bgImg;
     delete mainWindow;
 

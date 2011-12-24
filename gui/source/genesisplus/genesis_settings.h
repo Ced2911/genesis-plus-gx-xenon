@@ -10,10 +10,11 @@
 
 // menu options
 enum MENU_OPTION_ORDER{
+    MO_ASPECT_RATIO,    
+    MO_VIDEO,
     MO_SAVE,
     MO_INPUT,
     MO_DEVICE,
-    MO_VIDEO,
     MO_OVERSCAN,
     MO_SYSTEM,
     MO_REGION,
@@ -88,6 +89,7 @@ enum OVERSCAN_VALUES {
 enum VF_VALUES {
     VF_NONE,
     VF_BLINEAR,
+    VF_2XSAI,
     VF_MAX
 };
 
@@ -129,6 +131,12 @@ enum DEVICE_VALUES {
     DEVICE_MAX
 };
 
+enum aspect_ratio{
+    ASPECT_RATIO_4_3,
+    ASPECT_RATIO_SCREECH,
+    ASPECT_MAX
+};
+
 struct GenesisPlusSettings {
     int input_type;
     int device_type;
@@ -139,6 +147,7 @@ struct GenesisPlusSettings {
     int lock_on;
     int ym2413;
     int saves;
+    int aspect_ratio;
 };
 
 extern GenesisPlusSettings gensettings;
@@ -148,7 +157,7 @@ int LoadSettings(GenesisPlusSettings * settings);
 void SaveSettings(GenesisPlusSettings * settings);
 
 void getSaveTypeString(int type, char * dest);
-
+void getAspectTypeString(int type, char* dest);
 void getInputTypeString(int type, char * dest);
 void getDeviceTypeString(int type, char * dest);
 void getSystemTypeString(int type, char * dest);
