@@ -54,12 +54,39 @@ void SYSInputUpdate() {
         }
 
         {
-
             switch (input.dev[joynum]) {
                 case DEVICE_PAD3B:
-                case DEVICE_PAD6B:
-                case DEVICE_PAD2B:
+                {
+                    if (ctrl[joynum].x) input.pad[joynum] |= INPUT_A;
+                    if (ctrl[joynum].a) input.pad[joynum] |= INPUT_B;
+                    if (ctrl[joynum].b) input.pad[joynum] |= INPUT_C;
 
+                    if (ctrl[joynum].start) input.pad[joynum] |= INPUT_START;
+                    if (ctrl[joynum].select) input.pad[joynum] |= INPUT_MODE;
+                    if (ctrl[joynum].up) input.pad[joynum] |= INPUT_UP;
+                    else
+                        if (ctrl[joynum].down) input.pad[joynum] |= INPUT_DOWN;
+                    if (ctrl[joynum].left) input.pad[joynum] |= INPUT_LEFT;
+                    else
+                        if (ctrl[joynum].right) input.pad[joynum] |= INPUT_RIGHT;
+                    break;
+                }
+                case DEVICE_PAD2B:
+                {
+                    if (ctrl[joynum].a) input.pad[joynum] |= INPUT_A;
+                    if (ctrl[joynum].b) input.pad[joynum] |= INPUT_B;
+                    if (ctrl[joynum].start) input.pad[joynum] |= INPUT_START;
+                    if (ctrl[joynum].select) input.pad[joynum] |= INPUT_MODE;
+                    if (ctrl[joynum].up) input.pad[joynum] |= INPUT_UP;
+                    else
+                        if (ctrl[joynum].down) input.pad[joynum] |= INPUT_DOWN;
+                    if (ctrl[joynum].left) input.pad[joynum] |= INPUT_LEFT;
+                    else
+                        if (ctrl[joynum].right) input.pad[joynum] |= INPUT_RIGHT;
+                    break;
+                }
+                case DEVICE_PAD6B:
+                {
                     if (ctrl[joynum].a) input.pad[joynum] |= INPUT_A;
                     if (ctrl[joynum].b) input.pad[joynum] |= INPUT_B;
                     if (ctrl[joynum].rb) input.pad[joynum] |= INPUT_C;
@@ -75,6 +102,8 @@ void SYSInputUpdate() {
                     if (ctrl[joynum].left) input.pad[joynum] |= INPUT_LEFT;
                     else
                         if (ctrl[joynum].right) input.pad[joynum] |= INPUT_RIGHT;
+                    break;
+                }
                 default:
                     break;
             }

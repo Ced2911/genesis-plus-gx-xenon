@@ -80,9 +80,11 @@ static void SetGenConfig() {
     config.lock_on = gensettings.lock_on;
 
 
+    input.dev[0] = gensettings.device_type;
     input.system[0] = gensettings.input_type;
     config.input[0].padtype = gensettings.device_type;
 
+    input.dev[1] = gensettings.device_type;
     input.system[1] = gensettings.input_type;
     config.input[1].padtype = gensettings.device_type;
 
@@ -92,6 +94,7 @@ static void SetGenConfig() {
     config.system = gensettings.system;
 
     config.ym2413 = gensettings.ym2413;
+    
 }
 
 uint8_t state_buf[STATE_SIZE];
@@ -147,9 +150,6 @@ int genesis_init() {
     /* set default config */
     error_init();
     set_config_defaults();
-
-    /* user cfg */
-    SetGenConfig();
 
     /* Load ROM file */
     cart.rom = (unsigned char*) malloc(10 * 1024 * 1024);
@@ -213,6 +213,10 @@ int genesis_init() {
     if (gensettings.saves & SAVES_SRAM) {
         load_sram(sramname);
     }
+    
+    
+    /* user cfg */
+    SetGenConfig();
 
 
     /* reset emulation */
@@ -291,7 +295,9 @@ void genesis_reset() {
 void genesis_resume() {
     running = 1;
     gen_exit = 0;
-        
+    
+    SetGenConfig();
+    
     genesis_loop();
 }
 

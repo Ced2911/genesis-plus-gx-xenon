@@ -19,7 +19,9 @@ void SYSAudioFree() {
 
 void SYSAudioInit() {
     if (sound_initialised == 0) {
+/*
         xenon_sound_init();
+*/
 
         pAudioStart = pAudioBuffer = (uint16_t*) malloc(48000 * sizeof (uint16_t));
         memset(pAudioBuffer, 0, 48000 * sizeof (uint16_t));
@@ -43,9 +45,11 @@ void SYSAudioUpdate() {
     }
 
 
+/*
     for (i = 0; i < size; i++) {
         p[i] = bswap_32(p[i]);
     }
+*/
 
 
     if (pAudioBuffer - pAudioStart > 10000)

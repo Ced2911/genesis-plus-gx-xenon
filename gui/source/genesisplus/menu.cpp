@@ -24,6 +24,7 @@
 #include <xenon_soc/xenon_power.h>
 #include <debug.h>
 #include <threads/threads.h>
+#include <xenon_smc/xenon_smc.h>
 
 #include "genesis_settings.h"
 
@@ -1248,7 +1249,7 @@ static int MainMenu() {
     GuiImage exitBtnImgOver(&btnOutlineOver);
     GuiButton exitBtn(btnOutline.GetWidth(), btnOutline.GetHeight());
     exitBtn.SetAlignment(ALIGN_LEFT, ALIGN_BOTTOM);
-    exitBtn.SetPosition(100, -35);
+    exitBtn.SetPosition(50, -35);
     exitBtn.SetLabel(&exitBtnTxt);
     exitBtn.SetImage(&exitBtnImg);
     exitBtn.SetImageOver(&exitBtnImgOver);
@@ -1257,12 +1258,42 @@ static int MainMenu() {
     exitBtn.SetTrigger(&trigHome);
     exitBtn.SetEffectGrow();
 
+
+    GuiText shutdown_btnTxt("Shutdown", 18, ColorGrey2);
+    GuiImage shutdown_btnImg(&btnOutline);
+    GuiImage shutdown_btnImgOver(&btnOutlineOver);
+    GuiButton shutdown_btn(btnOutline.GetWidth(), btnOutline.GetHeight());
+    shutdown_btn.SetAlignment(ALIGN_LEFT, ALIGN_BOTTOM);
+    shutdown_btn.SetPosition(250, -35);
+    shutdown_btn.SetLabel(&shutdown_btnTxt);
+    shutdown_btn.SetImage(&shutdown_btnImg);
+    shutdown_btn.SetImageOver(&shutdown_btnImgOver);
+    shutdown_btn.SetSoundOver(&btnSoundOver);
+    shutdown_btn.SetTrigger(&trigA);
+    shutdown_btn.SetTrigger(&trigHome);
+    shutdown_btn.SetEffectGrow();
+
+    GuiText about_btnTxt("About", 18, ColorGrey2);
+    GuiImage about_btnImg(&btnOutline);
+    GuiImage about_btnImgOver(&btnOutlineOver);
+    GuiButton about_btn(btnOutline.GetWidth(), btnOutline.GetHeight());
+    about_btn.SetAlignment(ALIGN_LEFT, ALIGN_BOTTOM);
+    about_btn.SetPosition(450, -35);
+    about_btn.SetLabel(&about_btnTxt);
+    about_btn.SetImage(&about_btnImg);
+    about_btn.SetImageOver(&about_btnImgOver);
+    about_btn.SetSoundOver(&btnSoundOver);
+    about_btn.SetTrigger(&trigA);
+    about_btn.SetTrigger(&trigHome);
+    about_btn.SetEffectGrow();
+
     HaltGui();
     GuiWindow w(screenwidth, screenheight);
     w.Append(&titleTxt);
     w.Append(&fileBtn);
     w.Append(&optionBtn);
-//    w.Append(&savingBtn);
+    w.Append(&shutdown_btn);
+    //    w.Append(&savingBtn);
     // w.Append(&cheatsBtn); // unused
     w.Append(&exitBtn);
 
@@ -1294,6 +1325,24 @@ static int MainMenu() {
             if (choice == 1) {
                 menu = MENU_EXIT;
             }
+
+        } else if (shutdown_btn.GetState() == STATE_CLICKED) {
+            shutdown_btn.ResetState();
+
+            int choice = WindowPrompt(
+                    "Shutdown",
+                    "Are you sure that you want to shutdown?",
+                    "Yes",
+                    "No");
+            if (choice == 1) {
+                xenon_smc_power_shutdown();
+            }
+        } else if (about_btn.GetState() == STATE_CLICKED) {
+            about_btn.ResetState();
+
+            InfoPrompt(
+                "Genesis plus Xenon ..."
+            );
 
         }
     }

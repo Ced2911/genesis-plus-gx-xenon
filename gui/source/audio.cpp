@@ -12,6 +12,7 @@
 #include <string.h>
 #include <byteswap.h>
 #include <xenon_sound/sound.h>
+#include <debug.h>
 
 /****************************************************************************
  * InitAudio
@@ -19,6 +20,7 @@
  * Initializes the Wii's audio subsystem
  ***************************************************************************/
 void InitAudio() {
+    TR;
     xenon_sound_init();
 }
 

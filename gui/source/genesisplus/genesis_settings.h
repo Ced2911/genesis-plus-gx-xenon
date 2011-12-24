@@ -133,7 +133,7 @@ enum DEVICE_VALUES {
 
 enum aspect_ratio{
     ASPECT_RATIO_4_3,
-    ASPECT_RATIO_SCREECH,
+    ASPECT_RATIO_STRETCH,
     ASPECT_MAX
 };
 

@@ -97,7 +97,7 @@ void SetDefaultSettings(GenesisPlusSettings * settings) {
     settings->lock_on = LOCKON_OFF;
     settings->ym2413 = YM2413_AUTO;
     settings->saves = SAVES_BOTH;
-    settings->aspect_ratio = ASPECT_RATIO_SCREECH;
+    settings->aspect_ratio = ASPECT_RATIO_STRETCH;
 }
 
 void getAspectTypeString(int type, char* dest){
@@ -105,8 +105,8 @@ void getAspectTypeString(int type, char* dest){
         case ASPECT_RATIO_4_3:
             sprintf(dest, "4/3");
             break;
-        case ASPECT_RATIO_SCREECH:
-            sprintf(dest, "Screech");
+        case ASPECT_RATIO_STRETCH:
+            sprintf(dest, "Stretch");
             break;
     } 
 }
