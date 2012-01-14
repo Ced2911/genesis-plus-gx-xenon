@@ -23,7 +23,7 @@
 #include "w_input.h"
 #include <xenon_soc/xenon_power.h>
 #include <debug.h>
-#include <threads/threads.h>
+//#include <threads/threads.h>
 #include <xenon_smc/xenon_smc.h>
 
 #include "genesis_settings.h"
